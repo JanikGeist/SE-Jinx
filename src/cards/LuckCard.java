@@ -14,6 +14,6 @@ public class LuckCard {
 
     @Override
     public String toString (){
-        return "Luck Card: " + this.cardType;
+        return "" + this.cardType;
     }
 }

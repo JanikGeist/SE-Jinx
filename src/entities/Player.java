@@ -62,7 +62,7 @@ public class Player {
             Card card = this.cards.get(pos);
             this.cards.remove(pos);
             return card;
-        }catch (Error e){
+        }catch (IndexOutOfBoundsException e){
             System.out.println("[ERROR] No Card found!");
             return null;
         }
