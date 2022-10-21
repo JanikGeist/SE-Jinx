@@ -11,16 +11,16 @@ import java.util.List;
 import java.util.Stack;
 
 /**
- * Class representing a playing field containing 2 stacks of cards
+ * Class representing a playing field containing 2 stacks of cards and the playing field
  * */
 public class Table {
 
     // Stack containing all normal cards
-    Stack<Card> cardStack;
+    private final Stack<Card> cardStack;
     // Stack containing all luck cards
-    Stack<LuckCard> luckStack;
+    private final Stack<LuckCard> luckStack;
     // Actual playing field with a 4x4 of normal cards
-    Card[][] field;
+    private final Card[][] field;
 
     public Table(){
         this.cardStack = new Stack<>();
@@ -37,7 +37,7 @@ public class Table {
     /**
      * Function to init the card stack
      * */
-    public void initCards(){
+    private void initCards(){
 
         Card[] cards = new Card[48];
         //generate 8*6 Cards
@@ -58,7 +58,7 @@ public class Table {
     /**
      * Function to init the luckCard stack
      * */
-    public void initLuckCards(){
+    private void initLuckCards(){
 
         LuckCard[] luckCards = new LuckCard[12];
         //generate 2*6 Cards
@@ -79,7 +79,7 @@ public class Table {
     /**
      * Function to setup the play field
      * */
-    public void initField(){
+    private void initField(){
         for(int i = 0; i < 4; i++){
             for(int j = 0; j < 4; j++){
                 this.field[i][j] = cardStack.pop();

@@ -10,9 +10,9 @@ import java.util.ArrayList;
  * */
 public class Player {
 
-    String name;
-    ArrayList<Card> cards;
-    ArrayList<LuckCard> luckCards;
+    private final String name;
+    private final ArrayList<Card> cards;
+    private final ArrayList<LuckCard> luckCards;
 
     /**
      * Constructor for a new player
