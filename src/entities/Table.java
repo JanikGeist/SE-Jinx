@@ -81,7 +81,7 @@ public class Table {
      * */
     public void initField(){
         for(int i = 0; i < 4; i++){
-            for(int j = 0; i < 4; i++){
+            for(int j = 0; j < 4; j++){
                 this.field[i][j] = cardStack.pop();
             }
         }
@@ -138,6 +138,18 @@ public class Table {
     @Override
     //TODO: Maybe rework this to represent the field more accurate
     public String toString(){
-        return field.toString();
+        StringBuilder ret = new StringBuilder("");
+
+        for(int i = 0; i < 4; i++){
+            ret.append("[");
+            for(int j = 0; j < 4; j++){
+                ret.append(this.field[i][j]);
+                if(j < 3) {
+                    ret.append(",");
+                }
+            }
+            ret.append("]\n");
+        }
+        return ret.toString();
     }
 }

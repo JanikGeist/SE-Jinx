@@ -10,8 +10,7 @@ public class Main {
     public static void main(String[] args) {
         Table t = new Table();
 
-        t.initCards();
-        t.initLuckCards();
+        System.out.println(t);
 
         System.out.println("DONE");
     }
