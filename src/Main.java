@@ -8,7 +8,7 @@ import entities.Table;
 public class Main {
 
     public static void main(String[] args) {
-        Table t = new Table();
+        Table t = new Table(false);
 
         System.out.println(t);
 

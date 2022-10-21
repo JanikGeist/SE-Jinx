@@ -26,15 +26,19 @@ public class Table {
     // Actual playing field with a 4x4 of normal cards
     private final Card[][] field;
 
-    public Table(){
+    public Table(boolean readFromFile){
         this.cardStack = new Stack<>();
         this.luckStack = new Stack<>();
         this.field = new Card[4][4];
 
-        //initialize all card stacks
-        initCards();
-        initLuckCards();
-        readConfig();
+        //initialize all card stacks randomly or with config file
+        if(readFromFile){
+            readConfig();
+        }
+        else{
+            initCards();
+            initLuckCards();
+        }
         initField();
     }
 
@@ -159,7 +163,7 @@ public class Table {
     }
 
     /**
-     *
+     * get card order for both stacks from config file
      */
     public void readConfig(){
         String[] cardOrder;
