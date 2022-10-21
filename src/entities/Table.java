@@ -20,16 +20,17 @@ public class Table {
     // Stack containing all luck cards
     Stack<LuckCard> luckStack;
     // Actual playing field with a 4x4 of normal cards
-    Card[][] mid;
+    Card[][] field;
 
     public Table(){
         this.cardStack = new Stack<>();
         this.luckStack = new Stack<>();
-        this.mid = new Card[4][4];
+        this.field = new Card[4][4];
 
         //initialize all card stacks
         initCards();
         initLuckCards();
+        initField();
     }
 
     //TODO: Add config to give the option of set card distribution
@@ -79,26 +80,64 @@ public class Table {
      * Function to setup the play field
      * */
     public void initField(){
-
-    }
-
-    /**
-     * Function to draw a card from the top of the stack
-     * */
-    public Card drawCard(){
-        return null;
+        for(int i = 0; i < 4; i++){
+            for(int j = 0; i < 4; i++){
+                this.field[i][j] = cardStack.pop();
+            }
+        }
     }
 
     /**
      * Function to draw a luckCard from the luckCard stack
      * */
     public LuckCard drawLuckCard(){
-        return null;
+        return luckStack.pop();
+    }
+
+    /**
+     * Function to get the field
+     * */
+    public Card[][] getField(){
+        return this.field;
+    }
+
+    /**
+     * Function to remove a card from the field.
+     * @param x x coordinate of card
+     * @param y y coordinate of card
+     * @return card at position x,y
+     * */
+    public Card getCard(int x,int y){
+
+        //find card at coords (x,y) on field
+        Card selected = this.field[x][y];
+
+        //remove card from field
+        this.field[x][y] = null;
+
+        //return selected Card
+        return selected;
+    }
+
+    /**
+     * Function to add a card to the field
+     * @param x x coordinate of card
+     * @param y y coordinate of card
+     * @param c card to be added
+     * @return true/false, success/failed
+     * */
+    public boolean addCard(int x, int y, Card c){
+        if(this.field[x][y] == null){
+            this.field[x][y] = c;
+            return true;
+        }else{
+            return false;
+        }
     }
 
     @Override
     //TODO: Maybe rework this to represent the field more accurate
     public String toString(){
-        return mid.toString();
+        return field.toString();
     }
 }
