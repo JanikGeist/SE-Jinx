@@ -175,6 +175,12 @@ public class Table {
                 cardInfo = cardName.split(" ");
                 this.cardStack.add(new Card(CardColor.valueOf(cardInfo[0]),Integer.valueOf(cardInfo[1])));
             }
+            order = br.readLine();
+            cardOrder = order.split(",");
+            this.luckStack.clear();
+            for(String cardName : cardOrder){
+                this.luckStack.add(new LuckCard(CardType.valueOf(cardName)));
+            }
 
 
         } catch (FileNotFoundException e) {
