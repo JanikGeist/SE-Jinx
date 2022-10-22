@@ -105,7 +105,7 @@ public class Table {
      * Function to remove a card from the field.
      * @param x x coordinate of card
      * @param y y coordinate of card
-     * @return card at position x,y
+     * @return card at position x,y, null if there is none
      * */
     public Card getCard(int x,int y){
 
