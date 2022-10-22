@@ -131,6 +131,10 @@ public class GameLoop {
                         case "L" -> {
                             //Player plays a luck card
                             ArrayList<LuckCard> luckCards = player.getLuckCards();
+                            if(luckCards.isEmpty()){
+                                log("You dont have any luck cards!");
+                                break;
+                            }
                             log("Which card would you like to play?\n");
                             for (int i = 0; i < luckCards.size(); i++) {
                                 log(luckCards.get(i) + " - " + i);
@@ -259,6 +263,14 @@ public class GameLoop {
 
                             //get a card from the field
                             Card chosenOne = table.getCard(coords[0], coords[1]);
+
+                            if(chosenOne == null){
+                                log("There is no card at that position!");
+                                break;
+                            }else if(chosenOne.getValue() != diceCount){
+                                log("You can only choose a card equal to the value of your diceCount!");
+                                break;
+                            }
                             //add card to players hand
                             player.addCard(chosenOne);
                             //log that player has taken a card from the field
@@ -269,7 +281,7 @@ public class GameLoop {
                         default -> log("Not an option! Try Again!");
                     }
                 }
-                cP++;
+                cP = (cP + 1) % (players.length);
             }
 
             //clean up after round
