@@ -59,6 +59,10 @@ public class Player {
         this.luckCards.add(luckCard);
     }
 
+    public void removeLuckCard(LuckCard luckCard){
+        this.luckCards.remove(luckCard);
+    }
+
     /**
      * Removes a card from the players hand
      * @param pos position of card in players hand, counting from 0!

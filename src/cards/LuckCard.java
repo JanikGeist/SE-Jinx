@@ -2,7 +2,7 @@ package cards;
 
 public class LuckCard {
 
-    CardType cardType;
+    private CardType cardType;
 
     /**
      * Constructor for a new Card
@@ -12,8 +12,13 @@ public class LuckCard {
         this.cardType = cT;
     }
 
+    public CardType getCardType() {
+        return this.cardType;
+    }
+
     @Override
     public String toString (){
         return "" + this.cardType;
     }
+
 }

@@ -109,11 +109,17 @@ public class Table {
      * */
     public Card getCard(int x,int y){
 
+        Card selected = null;
         //find card at coords (x,y) on field
-        Card selected = this.field[x][y];
+        try {
+            selected = this.field[x][y];
 
-        //remove card from field
-        this.field[x][y] = null;
+            //remove card from field
+            this.field[x][y] = null;
+
+        }catch(Exception e){
+            System.out.println("");
+        }
 
         //return selected Card
         return selected;
