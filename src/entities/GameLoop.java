@@ -50,13 +50,32 @@ public class GameLoop {
 
         //run 3 rounds
         for(int j = 0; j < 3; j++){
-            //each run iterate over each player
-            for (Player player : players) {
-                log("Your turn " + player.getName() + "!");
-                // "throw" the dice
+            //current player
+            int cP = 0;
+
+            //each round iterate over all players until a player cant take a card anymore
+            while(true){
+                Player player = this.players[cP];
+
+                log("Your turn "+ player.getName() + "!");
+
+                //throw the dice
                 int diceCount = rand.nextInt(6) + 1;
-                log("You throw the dice and roll a: " + diceCount);
+                log("Your throw the dice and roll a " + diceCount);
+
+                //handle players luckCards if needed
+
+                //check if round has to end with specified rule
+
+                //break out of the loop if a player cant take a card anymore
+
+                //let player choose cards
+
+                //go to next player
+                cP++;
             }
+
+            //clean up after round
         }
     }
 

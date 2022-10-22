@@ -135,6 +135,22 @@ public class Table {
         }
     }
 
+    /**
+     * Function to check if there is a card with the same value as x
+     * @param x number to look for
+     * @return boolean true if there is a card with the same value
+     * */
+    private boolean checkForCard(int x){
+        for(int i = 0; i < 4; i++){
+            for(int j = 0; j < 4; j++){
+                if(this.field[i][j].getValue() == x){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     @Override
     //TODO: Maybe rework this to represent the field more accurate
     public String toString(){
