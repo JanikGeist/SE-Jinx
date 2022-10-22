@@ -6,11 +6,15 @@ import entities.GameLoop;
 import entities.Player;
 import entities.Table;
 
+import java.util.Scanner;
+
 public class Main {
 
     public static void main(String[] args) {
-        GameLoop game = new GameLoop(2);
 
+        GameLoop game = new GameLoop();
+
+        game.run();
 
         System.out.println("DONE");
     }

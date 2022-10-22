@@ -39,6 +39,13 @@ public class Player {
     }
 
     /**
+     * returns players name
+     * */
+    public String getName(){
+        return this.name;
+    }
+
+    /**
      * Adds a card to the players hand
      * */
     public void addCard(Card card){
