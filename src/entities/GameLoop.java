@@ -1,6 +1,7 @@
 package entities;
 
-import java.io.InputStream;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -11,9 +12,11 @@ public class GameLoop {
 
     Table table;
     Player[] players;
+    ArrayList<String> highscores;
 
     public GameLoop(){
         this.table = new Table();
+        this.getHighscore();
     }
 
     /**
@@ -123,5 +126,35 @@ public class GameLoop {
                 }
             }
         }
+    }
+
+    /**
+     * loads data from Highscore file
+     */
+    private void getHighscore(){
+        try{
+            BufferedReader br = new BufferedReader(new FileReader("entities/highscore.txt"));
+
+            String line = br.readLine();
+
+            while(line != null){
+                this.highscores.add(line);
+                line = br.readLine();
+            }
+
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //TODO use both methods in game loop
+    private void showHighscore(){
+        //TODO
+    }
+
+    private void saveHighscore(){
+        //TODO delete all, then save all arraylist highscores entries
     }
 }
