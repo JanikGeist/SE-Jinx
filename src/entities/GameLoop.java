@@ -27,6 +27,7 @@ public class GameLoop {
         init();
         //start the game loop
         this.showHighscore();
+        this.saveHighscores();
         loop();
     }
 
@@ -153,7 +154,7 @@ public class GameLoop {
     //TODO use both methods in game loop
 
     /**
-     * 
+     * shows all high scores
      */
     private void showHighscore(){
         log("High scores:");
@@ -164,8 +165,27 @@ public class GameLoop {
         }
     }
 
+    /**
+     * saves high scores in textfile
+     */
     private void saveHighscores(){
         //TODO delete all, then save all arraylist high scores entries
+        try{
+            PrintWriter pw = new PrintWriter("entities/highscore.txt");
 
+            for(String entry : this.highscores){
+                pw.println(entry);
+                pw.flush();
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * adds Highscore of the current game
+     */
+    private void addCurrentHighscores(){
+        //TODO
     }
 }
