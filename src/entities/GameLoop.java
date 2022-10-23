@@ -12,7 +12,7 @@ public class GameLoop {
 
     Table table;
     Player[] players;
-    ArrayList<String> highscores;
+    ArrayList<String> highscores = new ArrayList<>();
 
     public GameLoop(){
         this.table = new Table();
@@ -26,6 +26,7 @@ public class GameLoop {
         //init all required fields for the first time
         init();
         //start the game loop
+        this.showHighscore();
         loop();
     }
 
@@ -150,11 +151,21 @@ public class GameLoop {
     }
 
     //TODO use both methods in game loop
+
+    /**
+     * 
+     */
     private void showHighscore(){
-        //TODO
+        log("High scores:");
+        int ranking = 0;
+        for(String score : this.highscores){
+            ranking++;
+            log(ranking + ". " + score);
+        }
     }
 
-    private void saveHighscore(){
-        //TODO delete all, then save all arraylist highscores entries
+    private void saveHighscores(){
+        //TODO delete all, then save all arraylist high scores entries
+
     }
 }
