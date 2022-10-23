@@ -78,6 +78,20 @@ public class Player {
             return null;
         }
     }
+    /**
+     * Overloaded removeCard function to remove a card by reference
+     * @param card card to be removed
+     * @return true if card was remove, false if card was not found
+     * */
+    public boolean removeCard(Card card){
+        try{
+            this.cards.remove(card);
+            return true;
+        }catch (Exception e){
+            System.out.println("[ERROR] No Card found!");
+            return false;
+        }
+    }
 
     /**
      * Calculates the current score of the player
@@ -95,6 +109,31 @@ public class Player {
 
     @Override
     public String toString(){
-        return "" + this.name + "\n" + this.cards.toString() + "Luck Cards: " + this.luckCards.toString();
+        StringBuilder ret = new StringBuilder("");
+
+        if(this.cards.size() == 0){
+            return this.name + "\n[]";
+        }
+
+        ret.append(this.name);
+        ret.append("\n");
+        ret.append("[");
+        for(int i = 0; i < this.cards.size(); i++){
+            ret.append(cards.get(i).toString());
+            if(i < this.cards.size() - 1){
+                ret.append(",");
+            }
+        }
+        ret.append("]\n");
+        ret.append(" [");
+        for(int i = 0; i < this.luckCards.size(); i++){
+            ret.append(luckCards.get(i).toString());
+            if(i < this.luckCards.size() - 1){
+                ret.append(",");
+            }
+        }
+        ret.append("]\n");
+
+        return ret.toString();
     }
 }

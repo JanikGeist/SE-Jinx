@@ -37,4 +37,14 @@ public class Card {
     public String toString (){
         return "" + this.value + "/" + this.cardColor;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Card)) return false;
+
+        Card c1 = (Card) o;
+
+        return this.cardColor.equals(c1.cardColor);
+    }
 }

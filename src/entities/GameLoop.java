@@ -5,8 +5,6 @@ import cards.Card;
 import cards.CardType;
 import cards.LuckCard;
 
-import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -39,14 +37,22 @@ public class GameLoop {
      * */
     private void init(){
         System.out.println("Welcome to JINX! How many players do you wish to play with?");
-        Scanner s = new Scanner(System.in);
-        int playerCount = s.nextInt();
-        // set size of players to user specified value
-        this.players = new Player[playerCount];
+        while(true){
+            Scanner s = new Scanner(System.in);
+            int playerCount = s.nextInt();
+            if(playerCount < 2 || playerCount > 4){
+                System.out.println("This game is designed for 2-4 Players! Choose again!");
+            }else{
+                // set size of players to user specified value
+                this.players = new Player[playerCount];
+                break;
+            }
+        }
 
         // init all players
         initPlayers();
     }
+
     //TODO: Add try/catch for exception handling
     /**
      * Function to get input of player as STRING
@@ -62,11 +68,15 @@ public class GameLoop {
     private int getPlayerInputINT(int min, int max){
         Scanner s = new Scanner(System.in);
         while(true){
-            int ret = s.nextInt();
-            if (ret > max || ret < min) {
-                log("Choose a number in the specified range!" + "[" + min + "," + max + "]");
-            } else {
-                return ret;
+            try{
+                int ret = s.nextInt();
+                if (ret > max || ret < min) {
+                    log("Choose a number in the specified range!" + "[" + min + "," + max + "]");
+                } else {
+                    return ret;
+                }
+            }catch (Exception e){
+                log("Enter a valid Number!");
             }
         }
     }
@@ -79,14 +89,12 @@ public class GameLoop {
     private void loop(){
         Random rand = new Random();
 
-
-        //Display table
-        log("\n" + table.toString());
-
         //run 3 rounds
         for(int j = 0; j < 3; j++){
             //current player
             int cP = 0;
+            //player that finished a round
+            int finisher = 0;
             //set false if player has no actions left --> terminating round
             boolean notOver = true;
             //each round iterate over all players until a player cant take a card anymore
@@ -99,18 +107,21 @@ public class GameLoop {
                 boolean stillActive = true;
                 //track played luckCards to avoid multiple uses
                 ArrayList<LuckCard> usedCards = new ArrayList<>();
+                //current player
+                Player player = this.players[cP];
                 //as long as player can perform an action
                 while(stillActive){
-                    //current player
-                    Player player = this.players[cP];
-                    log("Your turn "+ player.getName() + "!");
 
+                    log("\n" + this.table.toString());
+
+                    log("Your turn "+ player.getName() + "! Eye count - " + diceCount );
+                    log(player.toString());
                     //let player choose the action
                     log("""
                             Choose your action!
                             R - Roll the Dice
                             L - Play a luck card
-                            C - Choose a card from the field
+                            C - Choose a card - this might end the round!
                             """);
 
                     String select = getPlayerInputSTR();
@@ -255,37 +266,211 @@ public class GameLoop {
                                 log("Roll the dice first!");
                                 break;
                             }
-                            log("Which card would you like to take? Current diceCount: " + diceCount); //TODO: Check if player can choose this if he has already taken cards
+
+                            //check if the player is able to pick a card, if not the round turn!
+                            if(checkEndRound(diceCount)){
+                                //round
+                                notOver = false;
+                                stillActive = false;
+                                finisher = cP;
+                                break;
+                            }
+
+                            log("Which card would you like to take? Current diceCount: " + diceCount);
                             log("Enter the cards position as x,y");
                             //get player input and parse it into coordinates
                             String[] coordsSTR = getPlayerInputSTR().split(",");
-                            int[] coords = {Integer.parseInt(coordsSTR[0]), Integer.parseInt(coordsSTR[1])};
+                            try {
+                                int[] coords = {Integer.parseInt(coordsSTR[0]), Integer.parseInt(coordsSTR[1])};
 
-                            //get a card from the field
-                            Card chosenOne = table.getCard(coords[0], coords[1]);
 
-                            if(chosenOne == null){
-                                log("There is no card at that position!");
-                                break;
-                            }else if(chosenOne.getValue() != diceCount){
-                                log("You can only choose a card equal to the value of your diceCount!");
-                                break;
+                                //get a card from the field
+                                Card chosenOne = table.getCard(coords[0], coords[1]);
+
+                                if (chosenOne == null) {
+                                    log("There is no card at that position!");
+                                    break;
+                                } else if (chosenOne.getValue() != diceCount) {
+                                    log("You can only choose a card equal to the value of your diceCount!");
+                                    this.table.addCard(coords[0], coords[1], chosenOne);
+                                    break;
+                                }
+                                //add card to players hand
+                                player.addCard(chosenOne);
+                                //log that player has taken a card from the field
+                                actions.add(new Choose(player, chosenOne, coords[0], coords[1]));
+                                //end players turn, since he has chosen a card
+                                stillActive = false;
+                            }catch (Exception e){
+                                log("Choose a valid combination!");
                             }
-                            //add card to players hand
-                            player.addCard(chosenOne);
-                            //log that player has taken a card from the field
-                            actions.add(new Choose(player, chosenOne, coords[0], coords[1]));
-                            //end players turn, since he has chosen a card
-                            stillActive = false;
                         }
                         default -> log("Not an option! Try Again!");
                     }
                 }
+                //make sure current player always loops
                 cP = (cP + 1) % (players.length);
             }
-
             //clean up after round
+
+            log("Round Over! All your cards will be checked and possibly removed now");
+            //check which cards the players have to drop
+            for(Player p : players){
+                checkPlayerHand(p);
+            }
+
+            //let finisher drop his highest card
+            ArrayList<Card> drops = dropHighCard(players[finisher]);
+            if(drops.size() > 0) {
+                log(players[finisher].getName() + ", choose a card you wish to drop");
+                for (int i = 0; i < drops.size(); i++) {
+                    log(drops.get(i) + " - " + i);
+                }
+
+
+                int selection = getPlayerInputINT(0,drops.size());
+                //remove the card
+                players[finisher].removeCard(drops.get(selection));
+                log(drops.get(selection) + " has been removed from your hand!");
+
+            }else{
+                log(players[finisher] + ", has no cards available to drop...");
+            }
+
+            //let each player draw a luckCard
+            drawLuckCards(finisher);
+
+            //deal new cards
+            this.table.resetField();
         }
+    //all 3 rounds ended, calculate score here
+    log("Game Over!");
+    }
+
+    /**
+     * Function to handle the drawing of luck cards at the end a round
+     * */
+    private void drawLuckCards(int finisher){
+        //start with the finisher
+        Card[] hand = players[finisher].getCards().toArray(new Card[0]);
+        if(hand.length > 0) {
+            log(players[finisher].getName() + ", choose a card you wish to drop to draw a luckCard");
+            //list all cards he has
+            for (int i = 0; i < hand.length; i++) {
+                log(hand[i] + " - " + i);
+            }
+            log("Enter any other number to not pick a card");
+            //ask for input
+            int input = getPlayerInputINT(0, hand.length);
+            //only remove card if input is valid and player wants to do so!
+            if (!(input < 0 || input > hand.length)) {
+                //remove the card from players hand
+                players[finisher].removeCard(hand[input]);
+                //get new card from luckCardStack
+                LuckCard lC = this.table.drawLuckCard();
+                //add luckCard to players hand
+                players[finisher].addLuckCard(lC);
+                //log both actions!
+                actions.add(new Remove(players[finisher], hand[input]));
+                actions.add(new Draw(players[finisher], lC));
+            }
+        }else{
+            log(players[finisher] + ", has no cards to exchange for a luck card!");
+        }
+
+        //handle the rest of the players
+        for(Player p : players){
+            //finisher already drew his card
+            if(p != players[finisher]) {
+                // get the hand of the current player
+                hand = p.getCards().toArray(new Card[0]);
+                if (hand.length > 0) {
+                    log(players[finisher].getName() + ", choose a card you wish to drop to draw a luckCard");
+                    for (int i = 0; i < hand.length; i++) {
+                        log(hand[i] + " - " + i);
+                    }
+                    log("Enter any other number to not pick a card");
+                    //ask player which card he wants to drop
+                    int input = getPlayerInputINT(0, hand.length);
+                    if (input < 0 || input > hand.length) {
+                        return;
+                    } else {
+                        //remove card from players hand
+                        p.removeCard(hand[input]);
+                        //draw and add new luckCard
+                        LuckCard lC = this.table.drawLuckCard();
+                        p.addLuckCard(lC);
+
+                        //log actions
+                        actions.add(new Remove(p, hand[input]));
+                        actions.add(new Draw(p, lC));
+                    }
+                }else {
+                    log(p.getName() + ", has no Cards to exchange!");
+                }
+            }
+        }
+    }
+
+    /**
+     * Function to remove the highest card from the finisher
+     * */
+    private ArrayList<Card> dropHighCard(Player p){
+        ArrayList<Card> maxCards = new ArrayList<>();
+        int currentHigh = 0;
+        Card[] hand = p.getCards().toArray(new Card[0]);
+
+        for(Card c : hand){
+            if(c.getValue() > currentHigh){
+                currentHigh = c.getValue();
+                maxCards.add(c);
+            }
+        }
+
+        for(Card c : hand){
+            if(c.getValue() == currentHigh){
+                maxCards.add(c);
+            }
+        }
+
+        return maxCards;
+    }
+    /**
+     * Function to remove cards from player hand if round ends
+     * */
+    private void checkPlayerHand(Player p){
+        Card[] hand = p.getCards().toArray(new Card[0]);
+        Card[][] field = this.table.getField();
+
+        for(Card cP : hand){
+            for(Card[] row: field){
+                for(Card cF : row){
+                    if(cF != null && cP.getColor() == cF.getColor()){
+                        //Player has a card with the same color on his hand --> remove it!
+                        p.removeCard(cP);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Function to check if the turn of a player has to end because he cant choose a card
+     * @param diceCount the current eye count of the player
+     * @return true if player has no option, false if he does
+     * */
+    private boolean checkEndRound(int diceCount){
+        Card[][] field = this.table.getField();
+        for(Card[] row : field){
+            for(Card c : row){
+                if(c != null && c.getValue() == diceCount){
+                    //there is a card the player can choose
+                    return false;
+                }
+            }
+        }
+        //there is no card the player can choose --> end his turn
+        return true;
     }
 
     /**
