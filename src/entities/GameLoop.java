@@ -40,9 +40,6 @@ public class GameLoop {
         tabelVerlauf = new VerlaufTable(tableRunde);
         this.actions = new ArrayList<>();
         this.getHighscore();
-        //TODO remove
-        this.highscores.add("hoh 50");
-        this.saveHighscores();
     }
 
     /**
@@ -769,7 +766,6 @@ public class GameLoop {
         }
     }
 
-    //TODO use both methods in game loop
 
     /**
      * shows all high scores
