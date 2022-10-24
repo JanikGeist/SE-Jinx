@@ -1,5 +1,9 @@
 package entities;
 
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.Scanner;
 import actions.*;
 import actions.manipulation.liste.VerlaufTable;
 import cards.Card;
@@ -10,7 +14,6 @@ import actions.manipulation.Manipulation;
 
 
 import java.util.*;
-
 
 /**
  * Class handling game logic
@@ -24,12 +27,14 @@ public class GameLoop {
 
     Table table;
     Player[] players;
+    ArrayList<String> highscores = new ArrayList<>();
 
     ArrayList<Action> actions;
 
     public GameLoop() {
         this.table = new Table(false);
         this.actions = new ArrayList<>();
+        this.getHighscore();
     }
 
     /**
@@ -39,6 +44,8 @@ public class GameLoop {
         //init all required fields for the first time
         init();
         //start the game loop
+        this.showHighscore();
+        this.saveHighscores();
         loop();
     }
 
@@ -100,6 +107,8 @@ public class GameLoop {
      */
     private void loop() {
         Random rand = new Random();
+        //Display table
+        log("\n" + table.toString());
 
         //run 3 rounds
         for (int j = 0; j < 3; j++) {
@@ -422,8 +431,8 @@ public class GameLoop {
             //deal new cards
             this.table.resetField();
         }
-            //all 3 rounds ended, calculate score here
-            log("Game Over!");
+        //all 3 rounds ended, calculate score here
+        log("Game Over!");
 
     }
 
@@ -700,5 +709,84 @@ public class GameLoop {
             }
         }
     }
+        /**
+         * loads data from Highscore file
+         */
+        private void getHighscore () {
+            try {
+                BufferedReader br = new BufferedReader(new FileReader("entities/highscore.txt"));
 
+                String line = br.readLine();
+
+                while (line != null) {
+                    this.highscores.add(line);
+                    line = br.readLine();
+                }
+
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        //TODO use both methods in game loop
+
+        /**
+         * shows all high scores
+         */
+        private void showHighscore () {
+            log("High scores:");
+            int ranking = 0;
+            for (String score : this.highscores) {
+                ranking++;
+                log(ranking + ". " + score);
+            }
+        }
+
+        /**
+         * saves high scores in textfile
+         */
+        private void saveHighscores () {
+            try {
+                PrintWriter pw = new PrintWriter("entities/highscore.txt");
+
+                for (String entry : this.highscores) {
+                    pw.println(entry);
+                    pw.flush();
+                }
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        /**
+         * adds Highscore of the current game, sorted by score
+         */
+        private void addCurrentHighscores () {
+            int score = 0;
+            for (Player player : this.players) {
+                if (score < player.getScore()) {
+                    score = player.getScore();
+                }
+            }
+            for (Player player : this.players) {
+                if (score == player.getScore()) {
+                    ArrayList<String> newHighscore = new ArrayList<>();
+                    for (String line : this.highscores) {
+                        boolean added = false;
+                        String[] nameAndScore = line.split(" ");
+                        //wenn der alte wert kleiner ist als der score, score muss also darüber, bei gleichen werten kommt der neue nach unten
+                        if (Integer.parseInt(nameAndScore[1]) < score && !added) {
+                            newHighscore.add(player.getName() + " " + player.getScore());
+                            newHighscore.add(nameAndScore[0] + " " + nameAndScore[1]);
+                        } else {
+                            newHighscore.add(nameAndScore[0] + " " + nameAndScore[1]);
+                        }
+                    }
+                    this.highscores = newHighscore;
+                }
+            }
+        }
+    }
 }
