@@ -29,18 +29,19 @@ public class VerlaufTable  {
         }
     }
     public String feldAusgabe(TableRunde runde){
-        Array[][] halter = new Array[runde.getFeld().length][runde.getFeld()[0].length];
+            StringBuilder ret = new StringBuilder("");
 
-        String ausgabe="";
-        String auschnitt="";
-        for (int a=0; a<halter.length;a++){
-            for (int b=0; b<halter[0].length; b++)
-            {
-                auschnitt=halter[a+1][b+1].toString();
-                ausgabe=ausgabe+auschnitt;
+            for(int i = 0; i < 4; i++){
+                ret.append("[");
+                for(int j = 0; j < 4; j++){
+                    ret.append(runde.getFeld()[i][j]+"  ");
+                    if(j < 3) {
+                        ret.append(",");
+                    }
+                }
+                ret.append("]\n");
             }
-            ausgabe=ausgabe+"\n";
+            return ret.toString();
         }
-        return ausgabe;
     }
-}
+

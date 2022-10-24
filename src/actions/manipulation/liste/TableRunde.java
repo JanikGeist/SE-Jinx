@@ -17,9 +17,27 @@ public class TableRunde {
 
     public TableRunde (Card[][] feld, Stack<Card> normals, Stack<LuckCard> luckys){
         number++;
-        this.feld=feld;
+
         this.normals.addAll(normals);
         this.luckys.addAll(luckys);
+
+        this.feld=copy(feld);
+
+    }
+
+    public static Card[][] copy(Card[][] src) {
+        if (src == null) {
+            return null;
+        }
+
+        Card[][] copy = new Card[src.length][];
+
+        for (int i = 0; i < src.length; i++) {
+            copy[i] = new Card[src[i].length];
+            System.arraycopy(src[i], 0, copy[i], 0, src[i].length);
+        }
+
+        return copy;
     }
 
     public Card[][] getFeld() {
