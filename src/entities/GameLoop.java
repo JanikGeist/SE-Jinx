@@ -33,6 +33,7 @@ public class GameLoop {
         for(Player p : players){
             p.addLuckCard(new LuckCard(CardType.PLUSONE));
             p.addLuckCard(new LuckCard(CardType.MINUSONE));
+            p.addLuckCard(new LuckCard(CardType.MINUSONE));
         }
         //start the game loop
         loop();
@@ -213,6 +214,10 @@ public class GameLoop {
                                         log("Roll the dice first!");
                                         break;
                                     }
+                                    if(diceCount <= 1){
+                                        log("This wouldn't make much sense!");
+                                        break;
+                                    }
                                     //player can subtract one or two from the diceCount
                                     if (!usedCards.contains(lC)) {
                                         int t = 0;
@@ -224,6 +229,10 @@ public class GameLoop {
                                         if (t == 2) {
                                             log("What would you like to subtract? [1,2]");
                                             int subNum = getPlayerInputINT(1, 2);
+                                            if(subNum == 2 && diceCount < 3){
+                                                log("This wouldn't make much sense!");
+                                                break;
+                                            }
                                             diceCount -= subNum;
                                         } else {
                                             diceCount--;
