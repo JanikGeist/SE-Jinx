@@ -22,11 +22,13 @@ public class Manipulation {
 
     private Element auswahlSpieler;
     private TableRunde auswahlTisch;
+    private boolean zeitreise;
 
     public Manipulation(Verlaufsliste spieler, VerlaufTable tisch){
         this.spieler=spieler;
         this.tisch=tisch;
         this.auswahlSpieler=spieler.getTail().getDavor();
+        this.zeitreise=false;
     }
 
     public void manipulation(){
@@ -45,23 +47,25 @@ public class Manipulation {
                 redo();
             }
             else if (auswahl.equals("end")){
-                logger.info("Keine Aenderungen vorgenommen.");
+                logger.info("Wollen Sie die aenderungen uebernehmen druecken Sie die eins, wenn nicht druecken Sie irgendeine andere Taste."+
+                        "Sie sind "+zurueck+" Schritte zurueck gegangen und "+vor+" Schritte vorgegangen.");
+                String fertig=sc.next();
+                if (fertig.equals("1")){
+                    logger.info("Dieser Schritt ist nicht rueckgaengig zu machen.");
+                    if (vor!=1||zurueck!=1){
+                        zeitreise=true;
+                    }
+                }
+                else{
+                    logger.info("Ohne Aenderungen fortfahren.");
+                }
                 manipulieren=false;
             }
             else{
                 logger.info("Bitte gib etwas sinnvolles ein.");
             }
         }
-        logger.info("Wollen Sie die aenderungen uebernehmen druecken Sie die eins, wenn nicht druecken Sie irgendeine andere Taste."+
-                "Sie sind "+zurueck+" Schritte zurueck gegangen und "+vor+" Schritte vorgegangen.");
-        String fertig=sc.next();
-        if (fertig.equals("1")){
-            logger.info("Dieser Schritt ist nicht rueckgaengig zu machen.");
-            zeitreise();
-        }
-        else{
-            logger.info("Ohne Aenderungen fortfahren.");
-        }
+
 
     }
 
@@ -118,7 +122,15 @@ public class Manipulation {
         }
     }
 
-    public void zeitreise(){
+    public boolean isZeitreise() {
+        return zeitreise;
+    }
 
+    public Element getAuswahlSpieler() {
+        return auswahlSpieler;
+    }
+
+    public TableRunde getAuswahlTisch() {
+        return auswahlTisch;
     }
 }

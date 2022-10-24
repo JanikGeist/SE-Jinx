@@ -6,6 +6,7 @@ import java.util.Random;
 import java.util.Scanner;
 
 import actions.*;
+import actions.manipulation.liste.Element;
 import actions.manipulation.liste.TableRunde;
 import actions.manipulation.liste.VerlaufTable;
 import cards.Card;
@@ -406,6 +407,9 @@ public class GameLoop {
                         case "M" -> {
                             Manipulation manipulation = new Manipulation(verlauf,tabelVerlauf);
                             manipulation.manipulation();
+                            if (manipulation.isZeitreise()){
+                                jump(manipulation.getAuswahlSpieler(), manipulation.getAuswahlTisch());
+                            }
                         }
                         case "T" -> {
                             tabelVerlauf.ausgabeRunden();
@@ -460,6 +464,47 @@ public class GameLoop {
         }
         //all 3 rounds ended, calculate score here
         log("Game Over!");
+
+    }
+
+    public void jump(Element spieler, TableRunde runde){
+        this.table.setCardStack(runde.getNormals());
+        this.table.setLuckStack(runde.getLuckys());
+        this.table.setField(runde.getFeld());
+        int index=this.tabelVerlauf.getRunden().indexOf(runde);
+        for (int z=index; z<this.tabelVerlauf.getRundenAnzahl()-1; z++){
+            this.tabelVerlauf.getRunden().remove(z);
+        }
+
+        if (verlauf.getTail().getDavor()!=verlauf.getHead()){
+            Element position=verlauf.getTail().getDavor();
+            if (position.equals(spieler)){
+                log("fertig");
+            }
+            else{
+                Player person=position.getPlayer();
+
+                String aktion=position.getAktion();
+                if (aktion.equals("LuckyBenutztBleibt")){
+
+                }
+                else  if (aktion.equals("LuckyBenutztWeg")){
+
+                }
+                else if (aktion.equals("ZahlDazuVonTisch")){
+
+                }
+                else if (aktion.equals("ZahlWeg")){
+
+                }
+                else if (aktion.equals("LuckyDazuVonStapel")){
+
+                }
+                else{
+                    log("Nichts zu tun.");
+                }
+            }
+        }
 
     }
 

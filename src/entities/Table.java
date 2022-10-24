@@ -20,11 +20,11 @@ import java.util.Stack;
 public class Table {
 
     // Stack containing all normal cards
-    private final Stack<Card> cardStack;
+    private  Stack<Card> cardStack;
     // Stack containing all luck cards
-    private final Stack<LuckCard> luckStack;
+    private  Stack<LuckCard> luckStack;
     // Actual playing field with a 4x4 of normal cards
-    private final Card[][] field;
+    private  Card[][] field;
 
     public Table(boolean readFromFile){
         this.cardStack = new Stack<>();
@@ -40,6 +40,17 @@ public class Table {
             initLuckCards();
         }
         initField();
+    }
+    public void setCardStack(Stack<Card> cards){
+        this.cardStack=cards;
+    }
+
+    public void setField(Card[][] field) {
+        this.field = field;
+    }
+
+    public void setLuckStack(Stack<LuckCard> luckStack) {
+        this.luckStack = luckStack;
     }
 
     //TODO: Add config to give the option of set card distribution
@@ -236,4 +247,6 @@ public class Table {
     public Stack<LuckCard> getLuckStack() {
         return this.luckStack;
     }
+
+
 }

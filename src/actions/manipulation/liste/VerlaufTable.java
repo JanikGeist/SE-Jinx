@@ -52,5 +52,10 @@ public class VerlaufTable  {
         int anzahl=runden.size();
         return anzahl;
     }
+
+    public void setRunden(ArrayList<TableRunde> runden) {
+        this.runden = runden;
+    }
+
 }
 
