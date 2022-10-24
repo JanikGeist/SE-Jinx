@@ -178,7 +178,7 @@ public class Table {
         for(int i = 0; i < 4; i++){
             ret.append("[");
             for(int j = 0; j < 4; j++){
-                ret.append(this.field[i][j]);
+                ret.append(this.field[i][j]+"  ");
                 if(j < 3) {
                     ret.append(",");
                 }

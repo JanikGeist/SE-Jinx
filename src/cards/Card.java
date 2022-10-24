@@ -8,6 +8,7 @@ public class Card {
     private final CardColor cardColor;
     // between 1-6
     private final int value;
+    private CardType typ;
 
     /**
      * Constructor for a new cards.Card
@@ -17,6 +18,7 @@ public class Card {
     public Card(CardColor cC, int v){
         this.cardColor = cC;
         this.value = v;
+        this.typ=CardType.NORMAL;
     }
 
     /**
@@ -31,6 +33,10 @@ public class Card {
      * */
     public CardColor getColor(){
         return this.cardColor;
+    }
+
+    public CardType getTyp() {
+        return typ;
     }
 
     @Override

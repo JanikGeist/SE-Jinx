@@ -4,6 +4,9 @@ import actions.*;
 import cards.Card;
 import cards.CardType;
 import cards.LuckCard;
+import actions.manipulation.liste.Verlaufsliste;
+import actions.manipulation.Manipulation;
+
 
 import java.util.*;
 
@@ -11,15 +14,20 @@ import java.util.*;
  * Class handling game logic
  * */
 public class GameLoop {
+    Manipulation manipulation = new Manipulation();
+    Verlaufsliste verlauf= new Verlaufsliste();
+    Player aktiv =new Player("ak");
 
     Table table;
     Player[] players;
 
     ArrayList<Action> actions;
 
+
     public GameLoop(){
         this.table = new Table();
         this.actions = new ArrayList<>();
+
     }
 
     /**
@@ -109,6 +117,7 @@ public class GameLoop {
                 ArrayList<LuckCard> usedCards = new ArrayList<>();
                 //current player
                 Player player = this.players[cP];
+                aktiv=player;
                 //as long as player can perform an action
                 while(stillActive){
 
@@ -122,6 +131,8 @@ public class GameLoop {
                             R - Roll the Dice
                             L - Play a luck card
                             C - Choose a card - this might end the round!
+                            M - Re or Undo
+                            N - Bisher gespielte Zuege
                             """);
 
                     String select = getPlayerInputSTR();
@@ -189,6 +200,7 @@ public class GameLoop {
                                     } else {
                                         log("You played that card already!");
                                     }
+                                    verlauf.zugEinfuegen(player,CardType.PLUSONE,null,0,"+ Lucky");
                                     break;
                                 case MINUSONE:
                                     //player can subtract one or two from the diceCount
@@ -212,6 +224,7 @@ public class GameLoop {
                                     } else {
                                         log("You already played that card!");
                                     }
+                                    verlauf.zugEinfuegen(player,CardType.MINUSONE,null,0,"+ Lucky");
                                     break;
                                 case FOURTOSIX:
                                     //player can choose a card between 4-6
@@ -220,6 +233,7 @@ public class GameLoop {
                                     //remove luckCard from players hand, since its single use!
                                     player.removeLuckCard(lC);
                                     actions.add(new Luck(player, lC));
+                                    verlauf.zugEinfuegen(player,CardType.FOURTOSIX,null,0,"+ Lucky");
                                     break;
                                 case EXTRATHROW:
                                     //player can throw the dice again
@@ -245,6 +259,7 @@ public class GameLoop {
                                         //make sure player can use card only once per round!
                                         usedCards.add(lC);
                                         actions.add(new Luck(player, lC));
+                                        verlauf.zugEinfuegen(player,CardType.EXTRATHROW,null,0,"+ Lucky");
                                     } else {
                                         log("You already played that card!");
                                     }
@@ -256,6 +271,7 @@ public class GameLoop {
                                     //remove luckCard from players hand, since its single use!
                                     player.removeLuckCard(lC);
                                     actions.add(new Luck(player, lC));
+                                    verlauf.zugEinfuegen(player,CardType.ONETOTHREE,null,0,"+ Lucky");
                                     break;
                             }
                         }
@@ -299,11 +315,18 @@ public class GameLoop {
                                 player.addCard(chosenOne);
                                 //log that player has taken a card from the field
                                 actions.add(new Choose(player, chosenOne, coords[0], coords[1]));
+                                verlauf.zugEinfuegen(player,chosenOne.getTyp(),chosenOne.getColor(),chosenOne.getValue(),"+ Zahl");
                                 //end players turn, since he has chosen a card
                                 stillActive = false;
                             }catch (Exception e){
                                 log("Choose a valid combination!");
                             }
+                        }
+                        case "M" ->{
+                            manipulation.manipulation();
+                        }
+                        case "N"->{
+                            verlauf.verlaufAnzeigen();
                         }
                         default -> log("Not an option! Try Again!");
                     }
@@ -329,8 +352,10 @@ public class GameLoop {
 
 
                 int selection = getPlayerInputINT(0,drops.size());
+                verlauf.zugEinfuegen(players[finisher],CardType.NORMAL,drops.get(selection).getColor(),drops.get(selection).getValue(),"- Zahl a");
                 //remove the card
                 players[finisher].removeCard(drops.get(selection));
+
                 log(drops.get(selection) + " has been removed from your hand!");
 
             }else{
@@ -365,11 +390,13 @@ public class GameLoop {
             //only remove card if input is valid and player wants to do so!
             if (!(input < 0 || input > hand.length)) {
                 //remove the card from players hand
+                verlauf.zugEinfuegen(players[finisher],CardType.NORMAL,hand[input].getColor(),hand[input].getValue(),"- Zahl b");
                 players[finisher].removeCard(hand[input]);
                 //get new card from luckCardStack
                 LuckCard lC = this.table.drawLuckCard();
                 //add luckCard to players hand
                 players[finisher].addLuckCard(lC);
+                verlauf.zugEinfuegen(players[finisher],lC.getCardType(),null,0,"+ Lucky");
                 //log both actions!
                 actions.add(new Remove(players[finisher], hand[input]));
                 actions.add(new Draw(players[finisher], lC));
@@ -396,10 +423,12 @@ public class GameLoop {
                         return;
                     } else {
                         //remove card from players hand
+                        verlauf.zugEinfuegen(p,hand[input].getTyp(),hand[input].getColor(),hand[input].getValue(),"- Zahl c");
                         p.removeCard(hand[input]);
                         //draw and add new luckCard
                         LuckCard lC = this.table.drawLuckCard();
                         p.addLuckCard(lC);
+                        verlauf.zugEinfuegen(p,lC.getCardType(),null,0,"+ Lucky");
 
                         //log actions
                         actions.add(new Remove(p, hand[input]));
@@ -447,6 +476,7 @@ public class GameLoop {
                 for(Card cF : row){
                     if(cF != null && cP.getColor() == cF.getColor()){
                         //Player has a card with the same color on his hand --> remove it!
+                        verlauf.zugEinfuegen(p,cF.getTyp(),cF.getColor(),cF.getValue(),"- Zahl d");
                         p.removeCard(cP);
                     }
                 }

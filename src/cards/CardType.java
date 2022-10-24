@@ -10,4 +10,5 @@ public enum CardType {
     CARDSUM, //Player can take cards with combined values of the count
     ONETOTHREE, //Player can take a card with a value between 1-3
     FOURTOSIX,  //Player can take a card with a value between 4-6
+    NORMAL, //Number Cards from 1 to 6
 }

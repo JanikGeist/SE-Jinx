@@ -21,4 +21,5 @@ public class LuckCard {
         return "" + this.cardType;
     }
 
+
 }
