@@ -281,7 +281,8 @@ public class GameLoop {
                             //get player input and parse it into coordinates
                             String[] coordsSTR = getPlayerInputSTR().split(",");
                             try {
-                                int[] coords = {Integer.parseInt(coordsSTR[0]), Integer.parseInt(coordsSTR[1])};
+                                //subtract one to get back to array counting
+                                int[] coords = {Integer.parseInt(coordsSTR[0]) - 1, Integer.parseInt(coordsSTR[1]) - 1};
 
 
                                 //get a card from the field
@@ -385,7 +386,7 @@ public class GameLoop {
                 // get the hand of the current player
                 hand = p.getCards().toArray(new Card[0]);
                 if (hand.length > 0) {
-                    log(players[finisher].getName() + ", choose a card you wish to drop to draw a luckCard");
+                    log(p.getName() + ", choose a card you wish to drop to draw a luckCard");
                     for (int i = 0; i < hand.length; i++) {
                         log(hand[i] + " - " + i);
                     }
@@ -423,7 +424,6 @@ public class GameLoop {
         for(Card c : hand){
             if(c.getValue() > currentHigh){
                 currentHigh = c.getValue();
-                maxCards.add(c);
             }
         }
 
@@ -481,7 +481,7 @@ public class GameLoop {
      * */
     private boolean chooseCards(int diceCount, Player player){
         log("Your diceCount is "  + diceCount + " choose cards equivalent to that number!");
-        log("To choose a card type the coordinates x,y");
+
         int sum = 0;
         ArrayList<Card> cards = new ArrayList<>();
         //let player select cards until he matches the diceCount
@@ -502,8 +502,10 @@ public class GameLoop {
             }else{
                 for (int[] coord : coords) {
                     Card card = this.table.getCard(coord[0], coord[1]);
-                    cards.add(card);
-                    sum += card.getValue();
+                    if(card != null){
+                        cards.add(card);
+                        sum += card.getValue();
+                    }
                 }
                 if(sum != diceCount){
                     // sum doesn't match, put all cards back on the table
