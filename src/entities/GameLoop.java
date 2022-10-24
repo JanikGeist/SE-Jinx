@@ -32,7 +32,7 @@ public class GameLoop {
         this.players = new Player[]{new Player("a"), new Player("b")};
         for(Player p : players){
             p.addLuckCard(new LuckCard(CardType.PLUSONE));
-            p.addLuckCard(new LuckCard(CardType.MINUSONE));
+            p.addLuckCard(new LuckCard(CardType.EXTRATHROW));
             p.addLuckCard(new LuckCard(CardType.MINUSONE));
         }
         //start the game loop
