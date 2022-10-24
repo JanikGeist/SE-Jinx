@@ -403,11 +403,11 @@ public class GameLoop {
             for (int i = 0; i < hand.length; i++) {
                 log(hand[i] + " - " + i);
             }
-            log("Enter any other number to not pick a card");
+            log("Enter " + hand.length + "to not pick a card");
             //ask for input
             int input = getPlayerInputINT(0, hand.length);
             //only remove card if input is valid and player wants to do so!
-            if (!(input < 0 || input > hand.length)) {
+            if (!(input < 0 || input >= hand.length)) {
                 //remove the card from players hand
                 players[finisher].removeCard(hand[input]);
                 //get new card from luckCardStack
