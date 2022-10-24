@@ -393,6 +393,7 @@ public class GameLoop {
 
     /**
      * Function to handle the drawing of luck cards at the end a round
+     * TODO Split this up into 2 methods, the choosing can be handled by a single method
      * */
     private void drawLuckCards(int finisher){
         //start with the finisher
@@ -433,10 +434,10 @@ public class GameLoop {
                     for (int i = 0; i < hand.length; i++) {
                         log(hand[i] + " - " + i);
                     }
-                    log("Enter any other number to not pick a card");
+                    log("Enter " + hand.length + "to not pick a card");
                     //ask player which card he wants to drop
                     int input = getPlayerInputINT(0, hand.length);
-                    if (input < 0 || input > hand.length) {
+                    if (input < 0 || input >= hand.length) {
                         return;
                     } else {
                         //remove card from players hand
