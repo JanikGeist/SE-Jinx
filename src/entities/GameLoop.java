@@ -9,6 +9,7 @@ import java.util.*;
 
 /**
  * Class handling game logic
+ * TODO Change the way y and x are used to determine a place on the field
  * */
 public class GameLoop {
 
@@ -90,8 +91,7 @@ public class GameLoop {
 
     /**
      * Main loop function handling the logic
-     * TODO: Check for round end, if a player cant take a card. Do so every time a player chose an option i guess
-     * TODO: Test this lol
+     * TODO: Split into smaller methods, make it easier to control the loop from the outside
      * */
     private void loop(){
         Random rand = new Random();
@@ -303,7 +303,7 @@ public class GameLoop {
                             }
 
                             log("Which card would you like to take? Current diceCount: " + diceCount);
-                            log("Enter the cards position as x,y");
+                            log("Enter the cards position as y,x");
                             //get player input and parse it into coordinates
                             String[] coordsSTR = getPlayerInputSTR().split(",");
                             try {
@@ -514,7 +514,7 @@ public class GameLoop {
         int[][] coords = new int[10][10];
         while (sum != diceCount) {
             log("You need to match your diceCount: " + diceCount);
-            log("Enter all cards you want to select like this: x,y;x,y;x,y;...;x,y if you want to break type BREAK");
+            log("Enter all cards you want to select like this: y,x;y,x;y,x;...;y,x if you want to break type BREAK");
             //get input from player
             String input = getPlayerInputSTR();
             if(input.equals("BREAK")){
@@ -565,7 +565,7 @@ public class GameLoop {
 
     /**
      * Function to parse a string of coordinates into a 2D integer array
-     * @param input array like x,y;x,y;...;x,y
+     * @param input array like y,x;y,x;...;y,x
      * @return int[][] of coord-pairs, null if error
      * */
     private int[][] parseCoordinateInput(String input){
