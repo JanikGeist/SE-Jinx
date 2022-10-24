@@ -372,13 +372,13 @@ public class GameLoop {
                 }
 
 
-                int selection = getPlayerInputINT(0,drops.size());
+                int selection = getPlayerInputINT(0,drops.size() - 1);
                 //remove the card
                 players[finisher].removeCard(drops.get(selection));
                 log(drops.get(selection) + " has been removed from your hand!");
 
             }else{
-                log(players[finisher] + ", has no cards available to drop...");
+                log(players[finisher].getName() + ", has no cards available to drop...");
             }
 
             //let each player draw a luckCard
@@ -419,7 +419,7 @@ public class GameLoop {
                 actions.add(new Draw(players[finisher], lC));
             }
         }else{
-            log(players[finisher] + ", has no cards to exchange for a luck card!");
+            log(players[finisher].getName() + ", has no cards to exchange for a luck card!");
         }
 
         //handle the rest of the players
