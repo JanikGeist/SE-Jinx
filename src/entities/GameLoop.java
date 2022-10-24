@@ -30,7 +30,8 @@ public class GameLoop {
         //init();
         this.players = new Player[]{new Player("a"), new Player("b")};
         for(Player p : players){
-            p.addLuckCard(new LuckCard(CardType.CARDSUM));
+            p.addLuckCard(new LuckCard(CardType.PLUSONE));
+            p.addLuckCard(new LuckCard(CardType.MINUSONE));
         }
         //start the game loop
         loop();
@@ -81,6 +82,8 @@ public class GameLoop {
                 }
             }catch (Exception e){
                 log("Enter a valid Number!");
+                //read line out of stream to clear it
+                s.nextLine();
             }
         }
     }
@@ -150,16 +153,23 @@ public class GameLoop {
                                 log("You dont have any luck cards!");
                                 break;
                             }
-                            log("Which card would you like to play?\n");
+                            log("Which card would you like to play? Type 0 to EXIT\n");
                             for (int i = 0; i < luckCards.size(); i++) {
-                                log(luckCards.get(i) + " - " + i);
+                                log(luckCards.get(i) + " - " + (i + 1));
                             }
 
                             //get chosen card pos in arraylist
-                            int num = getPlayerInputINT(0, luckCards.size());
+                            int num = getPlayerInputINT(0, luckCards.size()) - 1;
+                            if(num == -1){
+                                break;
+                            }
                             LuckCard lC = luckCards.get(num);
                             switch (lC.getCardType()) {
-                                case CARDSUM:
+                                case CARDSUM -> {
+                                    if (diceCount == 0) {
+                                        log("Roll the dice first!");
+                                        break;
+                                    }
                                     //player can choose cards based on rolled number
                                     if (!usedCards.contains(lC)) {
                                         //let the player choose a combination of cards matching the diceCount
@@ -170,8 +180,12 @@ public class GameLoop {
                                     } else {
                                         log("You played that card already!");
                                     }
-                                    break;
-                                case PLUSONE:
+                                }
+                                case PLUSONE -> {
+                                    if (diceCount == 0) {
+                                        log("Roll the dice first!");
+                                        break;
+                                    }
                                     //player can add one or two to the diceCount
                                     if (!usedCards.contains(lC)) {
                                         int z = 0;
@@ -193,8 +207,12 @@ public class GameLoop {
                                     } else {
                                         log("You played that card already!");
                                     }
-                                    break;
-                                case MINUSONE:
+                                }
+                                case MINUSONE -> {
+                                    if (diceCount == 0) {
+                                        log("Roll the dice first!");
+                                        break;
+                                    }
                                     //player can subtract one or two from the diceCount
                                     if (!usedCards.contains(lC)) {
                                         int t = 0;
@@ -216,16 +234,20 @@ public class GameLoop {
                                     } else {
                                         log("You already played that card!");
                                     }
-                                    break;
-                                case FOURTOSIX:
+                                }
+                                case FOURTOSIX -> {
                                     //player can choose a card between 4-6
                                     log("Which number do you choose? [4,6]");
                                     diceCount = getPlayerInputINT(4, 6);
                                     //remove luckCard from players hand, since its single use!
                                     player.removeLuckCard(lC);
                                     actions.add(new Luck(player, lC));
-                                    break;
-                                case EXTRATHROW:
+                                }
+                                case EXTRATHROW -> {
+                                    if (diceCount < 2) {
+                                        log("You still have an extra throw!");
+                                        break;
+                                    }
                                     //player can throw the dice again
                                     if (!usedCards.contains(lC)) {
                                         int k = 0;
@@ -252,15 +274,15 @@ public class GameLoop {
                                     } else {
                                         log("You already played that card!");
                                     }
-                                    break;
-                                case ONETOTHREE:
+                                }
+                                case ONETOTHREE -> {
                                     //player can choose a card between 1-3
                                     log("Which number do you choose? [1,3]");
                                     diceCount = getPlayerInputINT(1, 3);
                                     //remove luckCard from players hand, since its single use!
                                     player.removeLuckCard(lC);
                                     actions.add(new Luck(player, lC));
-                                    break;
+                                }
                             }
                         }
                         case "C" -> {
