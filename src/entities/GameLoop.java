@@ -4,7 +4,9 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
+
 import actions.*;
+import actions.manipulation.liste.TableRunde;
 import actions.manipulation.liste.VerlaufTable;
 import cards.Card;
 import cards.CardType;
@@ -22,9 +24,10 @@ import java.util.*;
 public class GameLoop {
     Manipulation manipulation = new Manipulation();
     Verlaufsliste verlauf = new Verlaufsliste();
-    //VerlaufTable tabelVerlauf = new VerlaufTable();
+    VerlaufTable tabelVerlauf;
     Player aktiv = new Player("ak");
 
+    TableRunde tableRunde;
     Table table;
     Player[] players;
     ArrayList<String> highscores = new ArrayList<>();
@@ -33,6 +36,8 @@ public class GameLoop {
 
     public GameLoop() {
         this.table = new Table(false);
+        tableRunde = new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack());
+        tabelVerlauf = new VerlaufTable(tableRunde);
         this.actions = new ArrayList<>();
         this.getHighscore();
     }
@@ -146,6 +151,7 @@ public class GameLoop {
                             C - Choose a card - this might end the round!
                             M - Re or Undo
                             N - Bisher gespielte Zuege
+                            T - bisherige Runden
                             """);
 
                     String select = getPlayerInputSTR();
@@ -240,6 +246,9 @@ public class GameLoop {
                                         log("You played that card already!");
                                     }
                                     verlauf.zugEinfuegen(player, CardType.PLUSONE, null, 0, "+ Lucky");
+                                    tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
+
+
                                 }
                                 case MINUSONE -> {
                                     if (diceCount == 0) {
@@ -283,6 +292,7 @@ public class GameLoop {
                                         log("You already played that card!");
                                     }
                                     verlauf.zugEinfuegen(player, CardType.MINUSONE, null, 0, "+ Lucky");
+                                    tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
                                 }
                                 case FOURTOSIX -> {
                                     //player can choose a card between 4-6
@@ -292,6 +302,7 @@ public class GameLoop {
                                     player.removeLuckCard(lC);
                                     actions.add(new Luck(player, lC));
                                     verlauf.zugEinfuegen(player, CardType.FOURTOSIX, null, 0, "+ Lucky");
+                                    tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
                                 }
                                 case EXTRATHROW -> {
                                     if (diceCount < 2) {
@@ -322,6 +333,7 @@ public class GameLoop {
                                         usedCards.add(lC);
                                         actions.add(new Luck(player, lC));
                                         verlauf.zugEinfuegen(player, CardType.EXTRATHROW, null, 0, "+ Lucky");
+                                        tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
                                     } else {
                                         log("You already played that card!");
                                     }
@@ -334,6 +346,8 @@ public class GameLoop {
                                     player.removeLuckCard(lC);
                                     actions.add(new Luck(player, lC));
                                     verlauf.zugEinfuegen(player, CardType.ONETOTHREE, null, 0, "+ Lucky");
+                                    tableRunde=new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack());
+                                    tabelVerlauf.add(tableRunde);
                                 }
                             }
                         }
@@ -379,6 +393,8 @@ public class GameLoop {
                                 //log that player has taken a card from the field
                                 actions.add(new Choose(player, chosenOne, coords[0], coords[1]));
                                 verlauf.zugEinfuegen(player, chosenOne.getTyp(), chosenOne.getColor(), chosenOne.getValue(), "+ Zahl");
+                                tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
+
                                 //end players turn, since he has chosen a card
                                 stillActive = false;
                             } catch (Exception e) {
@@ -387,6 +403,9 @@ public class GameLoop {
                         }
                         case "M" -> {
                             manipulation.manipulation();
+                        }
+                        case "T" -> {
+                            tabelVerlauf.ausgabeRunden();
                         }
                         case "N" -> {
                             verlauf.verlaufAnzeigen();
@@ -417,6 +436,7 @@ public class GameLoop {
 
                 int selection = getPlayerInputINT(0, drops.size() - 1);
                 verlauf.zugEinfuegen(players[finisher], CardType.NORMAL, drops.get(selection).getColor(), drops.get(selection).getValue(), "- Zahl a");
+                tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
                 //remove the card
                 players[finisher].removeCard(drops.get(selection));
                 log(drops.get(selection) + " has been removed from your hand!");
@@ -430,6 +450,9 @@ public class GameLoop {
 
             //deal new cards
             this.table.resetField();
+            tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
+
+
         }
         //all 3 rounds ended, calculate score here
         log("Game Over!");
@@ -457,12 +480,14 @@ public class GameLoop {
             if (!(input < 0 || input >= hand.length)) {
                 //remove the card from players hand
                 verlauf.zugEinfuegen(players[finisher], CardType.NORMAL, hand[input].getColor(), hand[input].getValue(), "- Zahl b");
+                tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
                 players[finisher].removeCard(hand[input]);
                 //get new card from luckCardStack
                 LuckCard lC = this.table.drawLuckCard();
                 //add luckCard to players hand
                 players[finisher].addLuckCard(lC);
                 verlauf.zugEinfuegen(players[finisher], lC.getCardType(), null, 0, "+ Lucky");
+                tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
                 //log both actions!
                 actions.add(new Remove(players[finisher], hand[input]));
                 actions.add(new Draw(players[finisher], lC));
@@ -490,11 +515,13 @@ public class GameLoop {
                     } else {
                         //remove card from players hand
                         verlauf.zugEinfuegen(p, hand[input].getTyp(), hand[input].getColor(), hand[input].getValue(), "- Zahl c");
+                        tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
                         p.removeCard(hand[input]);
                         //draw and add new luckCard
                         LuckCard lC = this.table.drawLuckCard();
                         p.addLuckCard(lC);
                         verlauf.zugEinfuegen(p, lC.getCardType(), null, 0, "+ Lucky");
+                        tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
 
                         //log actions
                         actions.add(new Remove(p, hand[input]));
@@ -542,7 +569,8 @@ public class GameLoop {
                 for (Card cF : row) {
                     if (cF != null && cP.getColor() == cF.getColor()) {
                         //Player has a card with the same color on his hand --> remove it!
-                        verlauf.zugEinfuegen(p, cF.getTyp(), cF.getColor(), cF.getValue(), "- Zahl d");
+                        verlauf.zugEinfuegen(p, cP.getTyp(), cP.getColor(), cP.getValue(), "- Zahl d");
+                        tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
                         p.removeCard(cP);
                     }
                 }
@@ -709,83 +737,83 @@ public class GameLoop {
             }
         }
     }
-        /**
-         * loads data from Highscore file
-         */
-        private void getHighscore () {
-            try {
-                BufferedReader br = new BufferedReader(new FileReader("entities/highscore.txt"));
 
-                String line = br.readLine();
+    /**
+     * loads data from Highscore file
+     */
+    private void getHighscore() {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader("entities/highscore.txt"));
 
-                while (line != null) {
-                    this.highscores.add(line);
-                    line = br.readLine();
-                }
+            String line = br.readLine();
 
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            while (line != null) {
+                this.highscores.add(line);
+                line = br.readLine();
+            }
+
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //TODO use both methods in game loop
+
+    /**
+     * shows all high scores
+     */
+    private void showHighscore() {
+        log("High scores:");
+        int ranking = 0;
+        for (String score : this.highscores) {
+            ranking++;
+            log(ranking + ". " + score);
+        }
+    }
+
+    /**
+     * saves high scores in textfile
+     */
+    private void saveHighscores() {
+        try {
+            PrintWriter pw = new PrintWriter("entities/highscore.txt");
+
+            for (String entry : this.highscores) {
+                pw.println(entry);
+                pw.flush();
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * adds Highscore of the current game, sorted by score
+     */
+    private void addCurrentHighscores() {
+        int score = 0;
+        for (Player player : this.players) {
+            if (score < player.getScore()) {
+                score = player.getScore();
             }
         }
-
-        //TODO use both methods in game loop
-
-        /**
-         * shows all high scores
-         */
-        private void showHighscore () {
-            log("High scores:");
-            int ranking = 0;
-            for (String score : this.highscores) {
-                ranking++;
-                log(ranking + ". " + score);
-            }
-        }
-
-        /**
-         * saves high scores in textfile
-         */
-        private void saveHighscores () {
-            try {
-                PrintWriter pw = new PrintWriter("entities/highscore.txt");
-
-                for (String entry : this.highscores) {
-                    pw.println(entry);
-                    pw.flush();
-                }
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        /**
-         * adds Highscore of the current game, sorted by score
-         */
-        private void addCurrentHighscores () {
-            int score = 0;
-            for (Player player : this.players) {
-                if (score < player.getScore()) {
-                    score = player.getScore();
-                }
-            }
-            for (Player player : this.players) {
-                if (score == player.getScore()) {
-                    ArrayList<String> newHighscore = new ArrayList<>();
-                    for (String line : this.highscores) {
-                        boolean added = false;
-                        String[] nameAndScore = line.split(" ");
-                        //wenn der alte wert kleiner ist als der score, score muss also darüber, bei gleichen werten kommt der neue nach unten
-                        if (Integer.parseInt(nameAndScore[1]) < score && !added) {
-                            newHighscore.add(player.getName() + " " + player.getScore());
-                            newHighscore.add(nameAndScore[0] + " " + nameAndScore[1]);
-                        } else {
-                            newHighscore.add(nameAndScore[0] + " " + nameAndScore[1]);
-                        }
+        for (Player player : this.players) {
+            if (score == player.getScore()) {
+                ArrayList<String> newHighscore = new ArrayList<>();
+                for (String line : this.highscores) {
+                    boolean added = false;
+                    String[] nameAndScore = line.split(" ");
+                    //wenn der alte wert kleiner ist als der score, score muss also darüber, bei gleichen werten kommt der neue nach unten
+                    if (Integer.parseInt(nameAndScore[1]) < score && !added) {
+                        newHighscore.add(player.getName() + " " + player.getScore());
+                        newHighscore.add(nameAndScore[0] + " " + nameAndScore[1]);
+                    } else {
+                        newHighscore.add(nameAndScore[0] + " " + nameAndScore[1]);
                     }
-                    this.highscores = newHighscore;
                 }
+                this.highscores = newHighscore;
             }
         }
     }

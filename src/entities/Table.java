@@ -100,7 +100,7 @@ public class Table {
      * Function to reset the field if new round begins
      * */
     public void resetField(){
-        if(this.cardStack.size() > 16) {
+        if(this.cardStack.size() >= 16) {
             for (int i = 0; i < 4; i++) {
                 for (int j = 0; j < 4; j++) {
                     this.field[i][j] = cardStack.pop();
@@ -227,5 +227,13 @@ public class Table {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Stack<Card> getCardStack() {
+        return this.cardStack;
+    }
+
+    public Stack<LuckCard> getLuckStack() {
+        return this.luckStack;
     }
 }
