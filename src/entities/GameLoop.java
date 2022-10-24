@@ -187,6 +187,10 @@ public class GameLoop {
                                         log("Roll the dice first!");
                                         break;
                                     }
+                                    if(diceCount >= 6){
+                                        log("This wouldn't make much sense!");
+                                        break;
+                                    }
                                     //player can add one or two to the diceCount
                                     if (!usedCards.contains(lC)) {
                                         int z = 0;
@@ -198,6 +202,10 @@ public class GameLoop {
                                         if (z == 2) {
                                             log("What would you like to add? [1,2]");
                                             int addNum = getPlayerInputINT(1, 2);
+                                            if(addNum == 2 && diceCount > 4){
+                                                log("This wouldn't make much sense!");
+                                                break;
+                                            }
                                             diceCount += addNum;
                                         } else {
                                             diceCount++;
