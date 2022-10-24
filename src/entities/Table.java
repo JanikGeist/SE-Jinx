@@ -5,6 +5,10 @@ import cards.CardColor;
 import cards.CardType;
 import cards.LuckCard;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -22,14 +26,19 @@ public class Table {
     // Actual playing field with a 4x4 of normal cards
     private final Card[][] field;
 
-    public Table(){
+    public Table(boolean readFromFile){
         this.cardStack = new Stack<>();
         this.luckStack = new Stack<>();
         this.field = new Card[4][4];
 
-        //initialize all card stacks
-        initCards();
-        initLuckCards();
+        //initialize all card stacks randomly or with config file
+        if(readFromFile){
+            readConfig();
+        }
+        else{
+            initCards();
+            initLuckCards();
+        }
         initField();
     }
 
@@ -186,5 +195,37 @@ public class Table {
             ret.append("]\n");
         }
         return ret.toString();
+    }
+
+    /**
+     * get card order for both stacks from config file
+     */
+    public void readConfig(){
+        String[] cardOrder;
+
+        try{
+            BufferedReader br = new BufferedReader(new FileReader("entities/configfile.csv"));
+
+            String order = br.readLine();
+            cardOrder = order.split(",");
+            this.cardStack.clear();
+            for(String cardName : cardOrder){
+                String[] cardInfo = new String[2];
+                cardInfo = cardName.split(" ");
+                this.cardStack.add(new Card(CardColor.valueOf(cardInfo[0]),Integer.valueOf(cardInfo[1])));
+            }
+            order = br.readLine();
+            cardOrder = order.split(",");
+            this.luckStack.clear();
+            for(String cardName : cardOrder){
+                this.luckStack.add(new LuckCard(CardType.valueOf(cardName)));
+            }
+
+
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
