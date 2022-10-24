@@ -194,17 +194,22 @@ public class GameLoop {
                                     //player can add one or two to the diceCount
                                     if (!usedCards.contains(lC)) {
                                         int z = 0;
+                                        LuckCard otherCard = null;
                                         for (LuckCard luck : luckCards) {
                                             if (luck.getCardType() == CardType.PLUSONE) {
                                                 z++;
+                                                otherCard = luck;
                                             }
                                         }
-                                        if (z == 2) {
+                                        if (otherCard != null) {
                                             log("What would you like to add? [1,2]");
                                             int addNum = getPlayerInputINT(1, 2);
                                             if(addNum == 2 && diceCount > 4){
                                                 log("This wouldn't make much sense!");
                                                 break;
+                                            }else if(addNum == 2){
+                                                //Make sure both cards are added to used cards if the player plays both
+                                                usedCards.add(otherCard);
                                             }
                                             diceCount += addNum;
                                         } else {
@@ -228,18 +233,23 @@ public class GameLoop {
                                     }
                                     //player can subtract one or two from the diceCount
                                     if (!usedCards.contains(lC)) {
+                                        LuckCard otherCard = null;
                                         int t = 0;
                                         for (LuckCard luck : luckCards) {
                                             if (luck.getCardType() == CardType.MINUSONE) {
                                                 t++;
+                                                otherCard = luck;
                                             }
                                         }
-                                        if (t == 2) {
+                                        if (otherCard != null) {
                                             log("What would you like to subtract? [1,2]");
                                             int subNum = getPlayerInputINT(1, 2);
                                             if(subNum == 2 && diceCount < 3){
                                                 log("This wouldn't make much sense!");
                                                 break;
+                                            }else if(subNum == 2){
+                                                //make sure to add both cards to used cards to prevent double usage
+                                                usedCards.add(otherCard);
                                             }
                                             diceCount -= subNum;
                                         } else {
