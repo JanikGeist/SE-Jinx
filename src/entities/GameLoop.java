@@ -19,7 +19,7 @@ import java.util.*;
 public class GameLoop {
     Manipulation manipulation = new Manipulation();
     Verlaufsliste verlauf = new Verlaufsliste();
-    VerlaufTable tabelVerlauf = new VerlaufTable();
+    //VerlaufTable tabelVerlauf = new VerlaufTable();
     Player aktiv = new Player("ak");
 
     Table table;
@@ -28,7 +28,7 @@ public class GameLoop {
     ArrayList<Action> actions;
 
     public GameLoop() {
-        this.table = new Table();
+        this.table = new Table(false);
         this.actions = new ArrayList<>();
     }
 
@@ -659,7 +659,7 @@ public class GameLoop {
      */
     private void resetGame() {
         //create new table
-        this.table = new Table();
+        this.table = new Table(false);
         //delete all players
         this.players = null;
 
