@@ -111,8 +111,8 @@ public class Player {
     public String toString(){
         StringBuilder ret = new StringBuilder("");
 
-        if(this.cards.size() == 0){
-            return this.name + "\n[]";
+        if(this.cards.size() == 0 && this.luckCards.size() == 0){
+            return this.name + "\n[]\n[]";
         }
 
         ret.append(this.name);
