@@ -169,7 +169,6 @@ public class GameLoop {
      * saves high scores in textfile
      */
     private void saveHighscores(){
-        //TODO delete all, then save all arraylist high scores entries
         try{
             PrintWriter pw = new PrintWriter("entities/highscore.txt");
 
@@ -183,9 +182,31 @@ public class GameLoop {
     }
 
     /**
-     * adds Highscore of the current game
+     * adds Highscore of the current game, sorted by score
      */
     private void addCurrentHighscores(){
-        //TODO
+        int score=0;
+        for(Player player : this.players){
+            if(score<player.getScore()){
+                score=player.getScore();
+            }
+        }
+        for(Player player : this.players){
+            if(score == player.getScore()){
+                ArrayList<String> newHighscore = new ArrayList<>();
+                for(String line : this.highscores){
+                    boolean added = false;
+                    String [] nameAndScore = line.split(" ");
+                    //wenn der alte wert kleiner ist als der score, score muss also darüber, bei gleichen werten kommt der neue nach unten
+                    if(Integer.parseInt(nameAndScore[1])<score&&!added){
+                        newHighscore.add(player.getName() + " " + player.getScore());
+                        newHighscore.add(nameAndScore[0] + " " + nameAndScore[1]);
+                    }else{
+                        newHighscore.add(nameAndScore[0] + " " + nameAndScore[1]);
+                    }
+                }
+                this.highscores=newHighscore;
+            }
+        }
     }
 }
