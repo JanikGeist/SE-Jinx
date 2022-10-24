@@ -1,6 +1,7 @@
 package entities;
 
 import actions.*;
+import actions.manipulation.liste.VerlaufTable;
 import cards.Card;
 import cards.CardType;
 import cards.LuckCard;
@@ -10,29 +11,31 @@ import actions.manipulation.Manipulation;
 
 import java.util.*;
 
+
 /**
  * Class handling game logic
  * TODO Change the way y and x are used to determine a place on the field
- * */
+ */
 public class GameLoop {
     Manipulation manipulation = new Manipulation();
-    Verlaufsliste verlauf= new Verlaufsliste();
-    Player aktiv =new Player("ak");
+    Verlaufsliste verlauf = new Verlaufsliste();
+    VerlaufTable tabelVerlauf = new VerlaufTable();
+    Player aktiv = new Player("ak");
 
     Table table;
     Player[] players;
 
     ArrayList<Action> actions;
 
-    public GameLoop(){
+    public GameLoop() {
         this.table = new Table();
         this.actions = new ArrayList<>();
     }
 
     /**
      * Call this function to run the game
-     * */
-    public void run(){
+     */
+    public void run() {
         //init all required fields for the first time
         init();
         //start the game loop
@@ -41,15 +44,15 @@ public class GameLoop {
 
     /**
      * Function to initialize everything needed
-     * */
-    private void init(){
+     */
+    private void init() {
         System.out.println("Welcome to JINX! How many players do you wish to play with?");
-        while(true){
+        while (true) {
             Scanner s = new Scanner(System.in);
             int playerCount = s.nextInt();
-            if(playerCount < 2 || playerCount > 4){
+            if (playerCount < 2 || playerCount > 4) {
                 System.out.println("This game is designed for 2-4 Players! Choose again!");
-            }else{
+            } else {
                 // set size of players to user specified value
                 this.players = new Player[playerCount];
                 break;
@@ -61,28 +64,29 @@ public class GameLoop {
     }
 
     //TODO: Add try/catch for exception handling
+
     /**
      * Function to get input of player as STRING
-     * */
-    private String getPlayerInputSTR(){
+     */
+    private String getPlayerInputSTR() {
         Scanner s = new Scanner(System.in);
         return s.nextLine();
     }
 
     /**
      * Function to get input of player as INT
-     * */
-    private int getPlayerInputINT(int min, int max){
+     */
+    private int getPlayerInputINT(int min, int max) {
         Scanner s = new Scanner(System.in);
-        while(true){
-            try{
+        while (true) {
+            try {
                 int ret = s.nextInt();
                 if (ret > max || ret < min) {
                     log("Choose a number in the specified range!" + "[" + min + "," + max + "]");
                 } else {
                     return ret;
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
                 log("Enter a valid Number!");
                 //read line out of stream to clear it
                 s.nextLine();
@@ -93,12 +97,12 @@ public class GameLoop {
     /**
      * Main loop function handling the logic
      * TODO: Split into smaller methods, make it easier to control the loop from the outside
-     * */
-    private void loop(){
+     */
+    private void loop() {
         Random rand = new Random();
 
         //run 3 rounds
-        for(int j = 0; j < 3; j++){
+        for (int j = 0; j < 3; j++) {
             //current player
             int cP = 0;
             //player that finished a round
@@ -106,7 +110,7 @@ public class GameLoop {
             //set false if player has no actions left --> terminating round
             boolean notOver = true;
             //each round iterate over all players until a player cant take a card anymore
-            while(notOver){
+            while (notOver) {
                 //eye count of players dice roll
                 int diceCount = 0;
                 //number of rolls player already had
@@ -117,13 +121,13 @@ public class GameLoop {
                 ArrayList<LuckCard> usedCards = new ArrayList<>();
                 //current player
                 Player player = this.players[cP];
-                aktiv=player;
+                aktiv = player;
                 //as long as player can perform an action
-                while(stillActive){
+                while (stillActive) {
 
                     log("\n" + this.table.toString());
 
-                    log("Your turn "+ player.getName() + "! Eye count - " + diceCount );
+                    log("Your turn " + player.getName() + "! Eye count - " + diceCount);
                     log(player.toString());
                     //let player choose the action
                     log("""
@@ -153,7 +157,7 @@ public class GameLoop {
                         case "L" -> {
                             //Player plays a luck card
                             ArrayList<LuckCard> luckCards = player.getLuckCards();
-                            if(luckCards.isEmpty()){
+                            if (luckCards.isEmpty()) {
                                 log("You dont have any luck cards!");
                                 break;
                             }
@@ -164,7 +168,7 @@ public class GameLoop {
 
                             //get chosen card pos in arraylist
                             int num = getPlayerInputINT(0, luckCards.size()) - 1;
-                            if(num == -1){
+                            if (num == -1) {
                                 break;
                             }
                             LuckCard lC = luckCards.get(num);
@@ -190,7 +194,7 @@ public class GameLoop {
                                         log("Roll the dice first!");
                                         break;
                                     }
-                                    if(diceCount >= 6){
+                                    if (diceCount >= 6) {
                                         log("This wouldn't make much sense!");
                                         break;
                                     }
@@ -201,7 +205,7 @@ public class GameLoop {
                                         for (LuckCard luck : luckCards) {
                                             if (luck.getCardType() == CardType.PLUSONE) {
                                                 z++;
-                                                if(luck != lC){
+                                                if (luck != lC) {
                                                     otherCard = luck;
                                                 }
                                             }
@@ -209,10 +213,10 @@ public class GameLoop {
                                         if (otherCard != null) {
                                             log("What would you like to add? [1,2]");
                                             int addNum = getPlayerInputINT(1, 2);
-                                            if(addNum == 2 && diceCount > 4){
+                                            if (addNum == 2 && diceCount > 4) {
                                                 log("This wouldn't make much sense!");
                                                 break;
-                                            }else if(addNum == 2){
+                                            } else if (addNum == 2) {
                                                 //Make sure both cards are added to used cards if the player plays both
                                                 usedCards.add(otherCard);
                                             }
@@ -226,14 +230,14 @@ public class GameLoop {
                                     } else {
                                         log("You played that card already!");
                                     }
-                                    verlauf.zugEinfuegen(player,CardType.PLUSONE,null,0,"+ Lucky");
+                                    verlauf.zugEinfuegen(player, CardType.PLUSONE, null, 0, "+ Lucky");
                                 }
                                 case MINUSONE -> {
                                     if (diceCount == 0) {
                                         log("Roll the dice first!");
                                         break;
                                     }
-                                    if(diceCount <= 1){
+                                    if (diceCount <= 1) {
                                         log("This wouldn't make much sense!");
                                         break;
                                     }
@@ -244,7 +248,7 @@ public class GameLoop {
                                         for (LuckCard luck : luckCards) {
                                             if (luck.getCardType() == CardType.MINUSONE) {
                                                 t++;
-                                                if(luck != lC){
+                                                if (luck != lC) {
                                                     otherCard = luck;
                                                 }
                                             }
@@ -252,10 +256,10 @@ public class GameLoop {
                                         if (otherCard != null) {
                                             log("What would you like to subtract? [1,2]");
                                             int subNum = getPlayerInputINT(1, 2);
-                                            if(subNum == 2 && diceCount < 3){
+                                            if (subNum == 2 && diceCount < 3) {
                                                 log("This wouldn't make much sense!");
                                                 break;
-                                            }else if(subNum == 2){
+                                            } else if (subNum == 2) {
                                                 //make sure to add both cards to used cards to prevent double usage
                                                 usedCards.add(otherCard);
                                             }
@@ -269,7 +273,7 @@ public class GameLoop {
                                     } else {
                                         log("You already played that card!");
                                     }
-                                    verlauf.zugEinfuegen(player,CardType.MINUSONE,null,0,"+ Lucky");
+                                    verlauf.zugEinfuegen(player, CardType.MINUSONE, null, 0, "+ Lucky");
                                 }
                                 case FOURTOSIX -> {
                                     //player can choose a card between 4-6
@@ -278,7 +282,7 @@ public class GameLoop {
                                     //remove luckCard from players hand, since its single use!
                                     player.removeLuckCard(lC);
                                     actions.add(new Luck(player, lC));
-                                    verlauf.zugEinfuegen(player,CardType.FOURTOSIX,null,0,"+ Lucky");
+                                    verlauf.zugEinfuegen(player, CardType.FOURTOSIX, null, 0, "+ Lucky");
                                 }
                                 case EXTRATHROW -> {
                                     if (diceCount < 2) {
@@ -308,20 +312,20 @@ public class GameLoop {
                                         //make sure player can use card only once per round!
                                         usedCards.add(lC);
                                         actions.add(new Luck(player, lC));
-                                        verlauf.zugEinfuegen(player,CardType.EXTRATHROW,null,0,"+ Lucky");
+                                        verlauf.zugEinfuegen(player, CardType.EXTRATHROW, null, 0, "+ Lucky");
                                     } else {
                                         log("You already played that card!");
                                     }
-
-                                case ONETOTHREE:
+                                }
+                                case ONETOTHREE -> {
                                     //player can choose a card between 1-3
                                     log("Which number do you choose? [1,3]");
                                     diceCount = getPlayerInputINT(1, 3);
                                     //remove luckCard from players hand, since its single use!
                                     player.removeLuckCard(lC);
                                     actions.add(new Luck(player, lC));
-                                    verlauf.zugEinfuegen(player,CardType.ONETOTHREE,null,0,"+ Lucky");
-
+                                    verlauf.zugEinfuegen(player, CardType.ONETOTHREE, null, 0, "+ Lucky");
+                                }
                             }
                         }
                         case "C" -> {
@@ -333,7 +337,7 @@ public class GameLoop {
                             }
 
                             //check if the player is able to pick a card, if not the round turn!
-                            if(checkEndRound(diceCount)){
+                            if (checkEndRound(diceCount)) {
                                 //round
                                 notOver = false;
                                 stillActive = false;
@@ -365,22 +369,23 @@ public class GameLoop {
                                 player.addCard(chosenOne);
                                 //log that player has taken a card from the field
                                 actions.add(new Choose(player, chosenOne, coords[0], coords[1]));
-                                verlauf.zugEinfuegen(player,chosenOne.getTyp(),chosenOne.getColor(),chosenOne.getValue(),"+ Zahl");
+                                verlauf.zugEinfuegen(player, chosenOne.getTyp(), chosenOne.getColor(), chosenOne.getValue(), "+ Zahl");
                                 //end players turn, since he has chosen a card
                                 stillActive = false;
-                            }catch (Exception e){
+                            } catch (Exception e) {
                                 log("Choose a valid combination!");
                             }
                         }
-                        case "M" ->{
+                        case "M" -> {
                             manipulation.manipulation();
                         }
-                        case "N"->{
+                        case "N" -> {
                             verlauf.verlaufAnzeigen();
                         }
                         default -> log("Not an option! Try Again!");
                     }
                 }
+
                 //make sure current player always loops
                 cP = (cP + 1) % (players.length);
             }
@@ -388,26 +393,26 @@ public class GameLoop {
 
             log("Round Over! All your cards will be checked and possibly removed now");
             //check which cards the players have to drop
-            for(Player p : players){
+            for (Player p : players) {
                 checkPlayerHand(p);
             }
 
             //let finisher drop his highest card
             ArrayList<Card> drops = dropHighCard(players[finisher]);
-            if(drops.size() > 0) {
+            if (drops.size() > 0) {
                 log(players[finisher].getName() + ", choose a card you wish to drop");
                 for (int i = 0; i < drops.size(); i++) {
                     log(drops.get(i) + " - " + i);
                 }
 
 
-                int selection = getPlayerInputINT(0,drops.size() - 1);
-                verlauf.zugEinfuegen(players[finisher],CardType.NORMAL,drops.get(selection).getColor(),drops.get(selection).getValue(),"- Zahl a");
+                int selection = getPlayerInputINT(0, drops.size() - 1);
+                verlauf.zugEinfuegen(players[finisher], CardType.NORMAL, drops.get(selection).getColor(), drops.get(selection).getValue(), "- Zahl a");
                 //remove the card
                 players[finisher].removeCard(drops.get(selection));
                 log(drops.get(selection) + " has been removed from your hand!");
 
-            }else{
+            } else {
                 log(players[finisher].getName() + ", has no cards available to drop...");
             }
 
@@ -417,18 +422,20 @@ public class GameLoop {
             //deal new cards
             this.table.resetField();
         }
-    //all 3 rounds ended, calculate score here
-    log("Game Over!");
+            //all 3 rounds ended, calculate score here
+            log("Game Over!");
+
     }
+
 
     /**
      * Function to handle the drawing of luck cards at the end a round
      * TODO Split this up into 2 methods, the choosing can be handled by a single method
-     * */
-    private void drawLuckCards(int finisher){
+     */
+    private void drawLuckCards(int finisher) {
         //start with the finisher
         Card[] hand = players[finisher].getCards().toArray(new Card[0]);
-        if(hand.length > 0) {
+        if (hand.length > 0) {
             log(players[finisher].getName() + ", choose a card you wish to drop to draw a luckCard");
             //list all cards he has
             for (int i = 0; i < hand.length; i++) {
@@ -440,25 +447,25 @@ public class GameLoop {
             //only remove card if input is valid and player wants to do so!
             if (!(input < 0 || input >= hand.length)) {
                 //remove the card from players hand
-                verlauf.zugEinfuegen(players[finisher],CardType.NORMAL,hand[input].getColor(),hand[input].getValue(),"- Zahl b");
+                verlauf.zugEinfuegen(players[finisher], CardType.NORMAL, hand[input].getColor(), hand[input].getValue(), "- Zahl b");
                 players[finisher].removeCard(hand[input]);
                 //get new card from luckCardStack
                 LuckCard lC = this.table.drawLuckCard();
                 //add luckCard to players hand
                 players[finisher].addLuckCard(lC);
-                verlauf.zugEinfuegen(players[finisher],lC.getCardType(),null,0,"+ Lucky");
+                verlauf.zugEinfuegen(players[finisher], lC.getCardType(), null, 0, "+ Lucky");
                 //log both actions!
                 actions.add(new Remove(players[finisher], hand[input]));
                 actions.add(new Draw(players[finisher], lC));
             }
-        }else{
+        } else {
             log(players[finisher].getName() + ", has no cards to exchange for a luck card!");
         }
 
         //handle the rest of the players
-        for(Player p : players){
+        for (Player p : players) {
             //finisher already drew his card
-            if(p != players[finisher]) {
+            if (p != players[finisher]) {
                 // get the hand of the current player
                 hand = p.getCards().toArray(new Card[0]);
                 if (hand.length > 0) {
@@ -473,18 +480,18 @@ public class GameLoop {
                         return;
                     } else {
                         //remove card from players hand
-                        verlauf.zugEinfuegen(p,hand[input].getTyp(),hand[input].getColor(),hand[input].getValue(),"- Zahl c");
+                        verlauf.zugEinfuegen(p, hand[input].getTyp(), hand[input].getColor(), hand[input].getValue(), "- Zahl c");
                         p.removeCard(hand[input]);
                         //draw and add new luckCard
                         LuckCard lC = this.table.drawLuckCard();
                         p.addLuckCard(lC);
-                        verlauf.zugEinfuegen(p,lC.getCardType(),null,0,"+ Lucky");
+                        verlauf.zugEinfuegen(p, lC.getCardType(), null, 0, "+ Lucky");
 
                         //log actions
                         actions.add(new Remove(p, hand[input]));
                         actions.add(new Draw(p, lC));
                     }
-                }else {
+                } else {
                     log(p.getName() + ", has no Cards to exchange!");
                 }
             }
@@ -493,39 +500,40 @@ public class GameLoop {
 
     /**
      * Function to remove the highest card from the finisher
-     * */
-    private ArrayList<Card> dropHighCard(Player p){
+     */
+    private ArrayList<Card> dropHighCard(Player p) {
         ArrayList<Card> maxCards = new ArrayList<>();
         int currentHigh = 0;
         Card[] hand = p.getCards().toArray(new Card[0]);
 
-        for(Card c : hand){
-            if(c.getValue() > currentHigh){
+        for (Card c : hand) {
+            if (c.getValue() > currentHigh) {
                 currentHigh = c.getValue();
             }
         }
 
-        for(Card c : hand){
-            if(c.getValue() == currentHigh){
+        for (Card c : hand) {
+            if (c.getValue() == currentHigh) {
                 maxCards.add(c);
             }
         }
 
         return maxCards;
     }
+
     /**
      * Function to remove cards from player hand if round ends
-     * */
-    private void checkPlayerHand(Player p){
+     */
+    private void checkPlayerHand(Player p) {
         Card[] hand = p.getCards().toArray(new Card[0]);
         Card[][] field = this.table.getField();
 
-        for(Card cP : hand){
-            for(Card[] row: field){
-                for(Card cF : row){
-                    if(cF != null && cP.getColor() == cF.getColor()){
+        for (Card cP : hand) {
+            for (Card[] row : field) {
+                for (Card cF : row) {
+                    if (cF != null && cP.getColor() == cF.getColor()) {
                         //Player has a card with the same color on his hand --> remove it!
-                        verlauf.zugEinfuegen(p,cF.getTyp(),cF.getColor(),cF.getValue(),"- Zahl d");
+                        verlauf.zugEinfuegen(p, cF.getTyp(), cF.getColor(), cF.getValue(), "- Zahl d");
                         p.removeCard(cP);
                     }
                 }
@@ -535,14 +543,15 @@ public class GameLoop {
 
     /**
      * Function to check if the turn of a player has to end because he cant choose a card
+     *
      * @param diceCount the current eye count of the player
      * @return true if player has no option, false if he does
-     * */
-    private boolean checkEndRound(int diceCount){
+     */
+    private boolean checkEndRound(int diceCount) {
         Card[][] field = this.table.getField();
-        for(Card[] row : field){
-            for(Card c : row){
-                if(c != null && c.getValue() == diceCount){
+        for (Card[] row : field) {
+            for (Card c : row) {
+                if (c != null && c.getValue() == diceCount) {
                     //there is a card the player can choose
                     return false;
                 }
@@ -554,12 +563,13 @@ public class GameLoop {
 
     /**
      * Function to let a player choose a card based on his eye count
+     *
      * @param diceCount current eye count as player chose this option
-     * @param player who chose this option
+     * @param player    who chose this option
      * @return true if player chose a valid combination and has the cards on his hand, false otherwise
-     * */
-    private boolean chooseCards(int diceCount, Player player){
-        log("Your diceCount is "  + diceCount + " choose cards equivalent to that number!");
+     */
+    private boolean chooseCards(int diceCount, Player player) {
+        log("Your diceCount is " + diceCount + " choose cards equivalent to that number!");
 
         int sum = 0;
         ArrayList<Card> cards = new ArrayList<>();
@@ -570,7 +580,7 @@ public class GameLoop {
             log("Enter all cards you want to select like this: y,x;y,x;y,x;...;y,x if you want to break type BREAK");
             //get input from player
             String input = getPlayerInputSTR();
-            if(input.equals("BREAK")){
+            if (input.equals("BREAK")) {
                 break;
             }
             //parse input
@@ -578,19 +588,19 @@ public class GameLoop {
             //only proceed if player entered correct coordinate format
             if (coords == null) {
                 log("You entered a wrong format! Try again!");
-            }else{
+            } else {
                 for (int[] coord : coords) {
                     Card card = this.table.getCard(coord[0], coord[1]);
-                    if(card != null){
+                    if (card != null) {
                         cards.add(card);
                         sum += card.getValue();
                     }
                 }
-                if(sum != diceCount){
+                if (sum != diceCount) {
                     // sum doesn't match, put all cards back on the table
                     int z = 0;
-                    for(Card c : cards){
-                        this.table.addCard(coords[z][0],coords[z][1],c);
+                    for (Card c : cards) {
+                        this.table.addCard(coords[z][0], coords[z][1], c);
                     }
                     //clear collection of cards
                     cards.clear();
@@ -600,16 +610,16 @@ public class GameLoop {
             }
         }
 
-        if(sum == diceCount){
+        if (sum == diceCount) {
             //player entered a correct combination of cards!
             int y = 0;
-            for(Card c : cards){
+            for (Card c : cards) {
                 player.addCard(c);
-                actions.add(new Choose(player,c,coords[y][0],coords[y][1])); //TODO: CHECK IF THIS WORKS :/
+                actions.add(new Choose(player, c, coords[y][0], coords[y][1])); //TODO: CHECK IF THIS WORKS :/
             }
             log(player.toString());
             return true;
-        }else{
+        } else {
             //player stopped card selection
             log("Stopping Card selection!");
             return false;
@@ -618,35 +628,36 @@ public class GameLoop {
 
     /**
      * Function to parse a string of coordinates into a 2D integer array
+     *
      * @param input array like y,x;y,x;...;y,x
      * @return int[][] of coord-pairs, null if error
-     * */
-    private int[][] parseCoordinateInput(String input){
-            try{
-                //split string into coordinate segments
-                String[] coordPair = input.split(";");
-                //init int[][] with correct dimensions
-                int[][] ret = new int[coordPair.length][2];
-                int i = 0;
-                for(String s: coordPair){
-                    //split coordinate segements into coordinates
-                    String[] coordSTR = s.split(",");
-                    //store coordinate as pairs, account for array counting
-                    ret[i][0] = Integer.parseInt(coordSTR[0]) - 1;
-                    ret[i][1] = Integer.parseInt(coordSTR[1]) - 1;
-                    i++;
-                }
-                return ret;
-            }catch (Exception e){
-                //return null if something went wrong
-                return null;
+     */
+    private int[][] parseCoordinateInput(String input) {
+        try {
+            //split string into coordinate segments
+            String[] coordPair = input.split(";");
+            //init int[][] with correct dimensions
+            int[][] ret = new int[coordPair.length][2];
+            int i = 0;
+            for (String s : coordPair) {
+                //split coordinate segements into coordinates
+                String[] coordSTR = s.split(",");
+                //store coordinate as pairs, account for array counting
+                ret[i][0] = Integer.parseInt(coordSTR[0]) - 1;
+                ret[i][1] = Integer.parseInt(coordSTR[1]) - 1;
+                i++;
             }
+            return ret;
+        } catch (Exception e) {
+            //return null if something went wrong
+            return null;
+        }
     }
 
     /**
      * Function to reset the game
-     * */
-    private void resetGame(){
+     */
+    private void resetGame() {
         //create new table
         this.table = new Table();
         //delete all players
@@ -658,23 +669,24 @@ public class GameLoop {
 
     /**
      * Function to easily log a msg on the console
-     * */
-    private void log(String msg){
+     */
+    private void log(String msg) {
         System.out.println("[JINX] " + msg);
     }
 
-    //TODO: Fail save, only let player enter valid names
+//TODO: Fail save, only let player enter valid names
+
     /**
      * Function to initialize all players by name
-     * */
-    private void initPlayers(){
+     */
+    private void initPlayers() {
 
         Scanner s = new Scanner(System.in);
 
         //create as many players as needed
-        for(int i = 0; i < players.length; i++){
+        for (int i = 0; i < players.length; i++) {
             //ask player for name, until confirmed
-            while(true) {
+            while (true) {
                 log("Welcome Player" + (i + 1) + " whats your name?");
                 String name = s.nextLine();
                 log("Are you sure your Name is: " + name + " [y/n]");
@@ -688,4 +700,5 @@ public class GameLoop {
             }
         }
     }
+
 }
