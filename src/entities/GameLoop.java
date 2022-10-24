@@ -22,10 +22,10 @@ import java.util.*;
  * TODO Change the way y and x are used to determine a place on the field
  */
 public class GameLoop {
-    Manipulation manipulation = new Manipulation();
     Verlaufsliste verlauf = new Verlaufsliste();
     VerlaufTable tabelVerlauf;
     Player aktiv = new Player("ak");
+    Player dummy = new Player("dummy");
 
     TableRunde tableRunde;
     Table table;
@@ -38,6 +38,7 @@ public class GameLoop {
         this.table = new Table(false);
         tableRunde = new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack());
         tabelVerlauf = new VerlaufTable(tableRunde);
+        verlauf.zugEinfuegen(dummy, null, null, 0, "platzhalter");
         this.actions = new ArrayList<>();
         this.getHighscore();
     }
@@ -203,6 +204,8 @@ public class GameLoop {
                                     } else {
                                         log("You played that card already!");
                                     }
+                                    verlauf.zugEinfuegen(player, CardType.PLUSONE, null, 0, "LuckyBenutztBleibt");
+                                    tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
                                 }
                                 case PLUSONE -> {
                                     if (diceCount == 0) {
@@ -245,7 +248,7 @@ public class GameLoop {
                                     } else {
                                         log("You played that card already!");
                                     }
-                                    verlauf.zugEinfuegen(player, CardType.PLUSONE, null, 0, "+ Lucky");
+                                    verlauf.zugEinfuegen(player, CardType.PLUSONE, null, 0, "LuckyBenutztBleibt");
                                     tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
 
 
@@ -291,7 +294,7 @@ public class GameLoop {
                                     } else {
                                         log("You already played that card!");
                                     }
-                                    verlauf.zugEinfuegen(player, CardType.MINUSONE, null, 0, "+ Lucky");
+                                    verlauf.zugEinfuegen(player, CardType.MINUSONE, null, 0, "LuckyBenutztBleibt");
                                     tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
                                 }
                                 case FOURTOSIX -> {
@@ -301,7 +304,7 @@ public class GameLoop {
                                     //remove luckCard from players hand, since its single use!
                                     player.removeLuckCard(lC);
                                     actions.add(new Luck(player, lC));
-                                    verlauf.zugEinfuegen(player, CardType.FOURTOSIX, null, 0, "+ Lucky");
+                                    verlauf.zugEinfuegen(player, CardType.FOURTOSIX, null, 0, "LuckyBenutztWeg");
                                     tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
                                 }
                                 case EXTRATHROW -> {
@@ -332,7 +335,7 @@ public class GameLoop {
                                         //make sure player can use card only once per round!
                                         usedCards.add(lC);
                                         actions.add(new Luck(player, lC));
-                                        verlauf.zugEinfuegen(player, CardType.EXTRATHROW, null, 0, "+ Lucky");
+                                        verlauf.zugEinfuegen(player, CardType.EXTRATHROW, null, 0, "LuckyBenutztBleibt");
                                         tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
                                     } else {
                                         log("You already played that card!");
@@ -345,9 +348,8 @@ public class GameLoop {
                                     //remove luckCard from players hand, since its single use!
                                     player.removeLuckCard(lC);
                                     actions.add(new Luck(player, lC));
-                                    verlauf.zugEinfuegen(player, CardType.ONETOTHREE, null, 0, "+ Lucky");
-                                    tableRunde=new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack());
-                                    tabelVerlauf.add(tableRunde);
+                                    verlauf.zugEinfuegen(player, CardType.ONETOTHREE, null, 0, "LuckyBenutztWeg");
+                                    tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
                                 }
                             }
                         }
@@ -392,7 +394,7 @@ public class GameLoop {
                                 player.addCard(chosenOne);
                                 //log that player has taken a card from the field
                                 actions.add(new Choose(player, chosenOne, coords[0], coords[1]));
-                                verlauf.zugEinfuegen(player, chosenOne.getTyp(), chosenOne.getColor(), chosenOne.getValue(), "+ Zahl");
+                                verlauf.zugEinfuegen(player, chosenOne.getTyp(), chosenOne.getColor(), chosenOne.getValue(), "ZahlDazuVonTisch");
                                 tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
 
                                 //end players turn, since he has chosen a card
@@ -402,6 +404,7 @@ public class GameLoop {
                             }
                         }
                         case "M" -> {
+                            Manipulation manipulation = new Manipulation(verlauf,tabelVerlauf);
                             manipulation.manipulation();
                         }
                         case "T" -> {
@@ -435,7 +438,7 @@ public class GameLoop {
 
 
                 int selection = getPlayerInputINT(0, drops.size() - 1);
-                verlauf.zugEinfuegen(players[finisher], CardType.NORMAL, drops.get(selection).getColor(), drops.get(selection).getValue(), "- Zahl a");
+                verlauf.zugEinfuegen(players[finisher], CardType.NORMAL, drops.get(selection).getColor(), drops.get(selection).getValue(), "ZahlWeg");
                 tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
                 //remove the card
                 players[finisher].removeCard(drops.get(selection));
@@ -451,6 +454,7 @@ public class GameLoop {
             //deal new cards
             this.table.resetField();
             tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
+            verlauf.zugEinfuegen(dummy, null, null, 0, "platzhalter");
 
 
         }
@@ -479,14 +483,14 @@ public class GameLoop {
             //only remove card if input is valid and player wants to do so!
             if (!(input < 0 || input >= hand.length)) {
                 //remove the card from players hand
-                verlauf.zugEinfuegen(players[finisher], CardType.NORMAL, hand[input].getColor(), hand[input].getValue(), "- Zahl b");
+                verlauf.zugEinfuegen(players[finisher], CardType.NORMAL, hand[input].getColor(), hand[input].getValue(), "ZahlWeg");
                 tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
                 players[finisher].removeCard(hand[input]);
                 //get new card from luckCardStack
                 LuckCard lC = this.table.drawLuckCard();
                 //add luckCard to players hand
                 players[finisher].addLuckCard(lC);
-                verlauf.zugEinfuegen(players[finisher], lC.getCardType(), null, 0, "+ Lucky");
+                verlauf.zugEinfuegen(players[finisher], lC.getCardType(), null, 0, "LuckyDazuVonStapel");
                 tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
                 //log both actions!
                 actions.add(new Remove(players[finisher], hand[input]));
@@ -514,13 +518,13 @@ public class GameLoop {
                         return;
                     } else {
                         //remove card from players hand
-                        verlauf.zugEinfuegen(p, hand[input].getTyp(), hand[input].getColor(), hand[input].getValue(), "- Zahl c");
+                        verlauf.zugEinfuegen(p, hand[input].getTyp(), hand[input].getColor(), hand[input].getValue(), "ZahlWeg");
                         tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
                         p.removeCard(hand[input]);
                         //draw and add new luckCard
                         LuckCard lC = this.table.drawLuckCard();
                         p.addLuckCard(lC);
-                        verlauf.zugEinfuegen(p, lC.getCardType(), null, 0, "+ Lucky");
+                        verlauf.zugEinfuegen(p, lC.getCardType(), null, 0, "LuckyDazuVonStapel");
                         tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
 
                         //log actions
@@ -569,7 +573,7 @@ public class GameLoop {
                 for (Card cF : row) {
                     if (cF != null && cP.getColor() == cF.getColor()) {
                         //Player has a card with the same color on his hand --> remove it!
-                        verlauf.zugEinfuegen(p, cP.getTyp(), cP.getColor(), cP.getValue(), "- Zahl d");
+                        verlauf.zugEinfuegen(p, cP.getTyp(), cP.getColor(), cP.getValue(), "ZahlWeg");
                         tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
                         p.removeCard(cP);
                     }

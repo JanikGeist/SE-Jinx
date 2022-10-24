@@ -43,5 +43,14 @@ public class VerlaufTable  {
             }
             return ret.toString();
         }
+
+    public ArrayList<TableRunde> getRunden() {
+        return runden;
     }
+
+    public int getRundenAnzahl(){
+        int anzahl=runden.size();
+        return anzahl;
+    }
+}
 

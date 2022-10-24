@@ -11,6 +11,7 @@ public class Verlaufsliste {
     private Element tail;
     public Element position;
     private Logger logger=Logger.getLogger(this.getClass().getName());
+    private int laenge=1;
 
 
     public Verlaufsliste(){
@@ -52,5 +53,22 @@ public class Verlaufsliste {
             logger.info("Zug:"+start.getAktion()+" Spieler:"+start.getPlayer().getName()+" Karte: "+start.getTyp()+" "+start.getFarbe()+" "+start.getWert()+"\n");
             start=start.getDanach();
         }        
+    }
+
+    public int getLaenge() {
+        Element h=head;
+        while(h.getDanach()!=tail){
+            this.laenge++;
+            h=h.getDanach();
+        }
+        return laenge;
+    }
+
+    public Element getHead() {
+        return head;
+    }
+
+    public Element getTail() {
+        return tail;
     }
 }
