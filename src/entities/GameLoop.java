@@ -27,7 +27,11 @@ public class GameLoop {
      * */
     public void run(){
         //init all required fields for the first time
-        init();
+        //init();
+        this.players = new Player[]{new Player("a"), new Player("b")};
+        for(Player p : players){
+            p.addLuckCard(new LuckCard(CardType.CARDSUM));
+        }
         //start the game loop
         loop();
     }
@@ -515,6 +519,8 @@ public class GameLoop {
                     }
                     //clear collection of cards
                     cards.clear();
+                    //reset the sum counter
+                    sum = 0;
                 }
             }
         }
@@ -550,9 +556,10 @@ public class GameLoop {
                 for(String s: coordPair){
                     //split coordinate segements into coordinates
                     String[] coordSTR = s.split(",");
-                    //store coordinate as pairs
-                    ret[i][0] = Integer.parseInt(coordSTR[0]);
-                    ret[i][1] = Integer.parseInt(coordSTR[1]);
+                    //store coordinate as pairs, account for array counting
+                    ret[i][0] = Integer.parseInt(coordSTR[0]) - 1;
+                    ret[i][1] = Integer.parseInt(coordSTR[1]) - 1;
+                    i++;
                 }
                 return ret;
             }catch (Exception e){
