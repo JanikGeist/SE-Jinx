@@ -198,7 +198,9 @@ public class GameLoop {
                                         for (LuckCard luck : luckCards) {
                                             if (luck.getCardType() == CardType.PLUSONE) {
                                                 z++;
-                                                otherCard = luck;
+                                                if(luck != lC){
+                                                    otherCard = luck;
+                                                }
                                             }
                                         }
                                         if (otherCard != null) {
@@ -238,7 +240,9 @@ public class GameLoop {
                                         for (LuckCard luck : luckCards) {
                                             if (luck.getCardType() == CardType.MINUSONE) {
                                                 t++;
-                                                otherCard = luck;
+                                                if(luck != lC){
+                                                    otherCard = luck;
+                                                }
                                             }
                                         }
                                         if (otherCard != null) {
