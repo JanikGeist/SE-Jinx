@@ -1,10 +1,89 @@
-Software Engineering - JINX in Java
+# Software Engineering - JINX in Java
 
 Dieses Projekt hat das Ziel, das Kartenspiel JINX textbasiert in Java um zu setzen.
-Dazu wird folgende Spielanleitung als Anhaltspunkt genutzt:
+Dazu wird folgende Spielanleitung als Anhaltspunkt genutzt: </br>
 https://www.piatnik.com/uploads/media/default/0001/07/4560ca1e18ebe34ed9611888af04ba7429eda696.pdf
 
-Teammitglieder:
+### Teammitglieder:
+- Anna Heim
+- Leonie Terlutter
+- Janik Geist
 
+Der Sourcecode wurde in 3 Packages aufgeteilt, um Klassen entsprechend ihrer Funktionen zu organisieren.
 
-{Hier Code beschreiben}
+### Package - actions:
+In dem Package Actions sind alle Aktionen enthalten, die ein Spieler während des Ablaufs des Spiels ausführen kann.
+Diese Aktionen sind als Unterklassen der Klasse Action definiert und speichern so immer auch den Spieler der diese Aktion
+ausführt. Des Weiteren speichern diese Action-Klassen alle Informationen die benötigt werden, um den Zug des Spielers rückgängig
+zu machen.
+
+### Package - cards:
+Das Package Cards enthält alle Klassen und Enmus die wichtig für die verschiedenen Karten sind. Card stellt eine normale
+Zahlenkarte mit Farbe und Nummer dar, LuckCard entspricht den Glückskarten. Farbe und Typ der Karten sind als Enum definiert,
+um diese Werte an einem zentralen Ort definieren zu können.
+
+### Package - entities:
+Dieses Package ist das Herzstück des Spiels. Es enthält den Tisch, auf welchem die Karten und Kartenstapel liegen,
+den Spieler mit Namen und seiner Hand, sowie den GameLoop welcher für den logischen Ablauf des Spiels zuständig ist.
+
+### Cards
+Das Spiel beinhaltet 60 Spielkarten, davon sind 48 Zahlen- und 12 Glückskarten. Die Zahlenkarten bestehen aus 8 verschiedenen
+Farben mit jeweiliger Beschriftung 1-6. Für die Unterscheidung von Glücks- und Zahlenkarten sind die Klassen Card und LuckCard.
+Eine Glückskarte kann einen von 6 Typen annehmen und somit verschiedene Funktionen für den Spieler bereitstellen. Diese Funktionen
+werden von dem GameLoop ausgeführt und kontrolliert, womit die LuckCard-Klasse nur Funktionen bereitstellen muss, um den Typ der Karte
+festzulegen. Eine Zahlenkarte besteht aus einer Zahl und einer Farbe, welche den Karten als Attribute zugefügt wurde. Unterhalb ist eine Auflistung der Methoden der einzelnen Klassen zu finden. Auf Grund
+des Umfangs der Klassen beschränken wir uns hier auf die Public Methoden.
+
+#### Class LuckCard
+Repräsentiert die Glückskarten. Beinhaltet den Kartentyp als Attribut
+Public Methoden:
+- getCardType(), gibt den Typ der Glückskarte aus.
+- toString(), gibt den Kartentyp in Textform aus.
+
+#### Class Card
+Repräsentiert die Zahlenkarten. Beinhaltet den Zahlenwert sowie die Farbe als Attribut. </br>
+Public Methoden:
+- getColor(), gibt die Farbe der Karte aus.
+- getValue(), gibt den Wert der Karte aus.
+- equals(), vergleicht zwei Karten anhand ihrer Farbe.
+- toString(), gibt die Karte in einem lesbaren Format aus.
+
+### Entities
+Entities sind der aktive Teil des Spielverlaufs. Sie nutzen die Karten und sorgen mithilfe von festgelegten Regeln
+für einen korrekten Spielablauf. Unterhalb ist eine Auflistung der Methoden der einzelnen Klassen zu finden. Auf Grund
+des Umfangs der Klassen beschränken wir uns hier auf die Public Methoden.
+
+#### Class Player
+Repräsentiert den Spieler, welcher aktiv am Spielverlauf teilnimmt. </br>
+Public Methoden:
+- getCards(), gibt die aktuellen Zahlenkarten auf der Hand des Spielers aus.
+- getLuckCards(), gibt die aktuellen Glückskarten auf der Hand des Spielers aus.
+- getName(), gibt den Namen des Spielers aus.
+- addCard(), fügt der Hand des Spielers eine Karte hinzu.
+- addLuckCard(), fügt der Hand des Spielers eine Glückskarte hinzu.
+- removeCard(), entfernt eine Karte von der Hand des Spielers
+- getScore(), berechnet den aktuellen Score des Spielers
+- toString(), gibt die Hände sowie den Namen des Spielers passen als Text aus.
+
+#### Class Table
+Repräsentiert den Tisch, mit Kartenstapeln und dem Spielfeld. </br>
+Public Methoden:
+- resetField(), nimmt Karten vom Kartenstapel und teilt diese auf dem Spielfeld aus.
+- drawLuckCard(), gibt eine Karte vom Glückskartenstapel aus.
+- getField(), gibt das aktuelle Spielfeld zurück.
+- getCard(), gibt eine Karte vom Spielfeld an der gegebenen Position zurück.
+- addCard(), legt eine Karte an der gegebenen Position auf dem Spielfeld ab.
+- toString(), gibt eine lesbare Repräsentation des Spielfeldes zurück
+
+#### Class GameLoop
+Repräsentiert die Spiellogik, mit Spielablauf und nötigen Checks.
+Der Ablauf des Spiels wird in der privaten Methode loop() ausgeführt.
+Public Methoden:
+- run(), startet das Spiel. Initialisiert alle nötigen Objekte und ruft eine Registrierung der Spieler auf.
+
+### Configfile und Highscores
+Das Configfile ist eine simple csv-Datei, von der die Bestückung der beiden Kartenstacks konfiguriert werden kann.
+Der User wird beim Start des Programms gefragt, ob er die Kartenkonfiguration laden möchte.
+Die Highscores werden automatisch am Anfang der Runde geladen und können vom User jederzeit angezeigt werden.
+Am Ende eines Spiels werden die Highscores dann in der highscorce.txt gespeichert und sind dann in der nächsten Runde verfügbar.
+
