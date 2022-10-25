@@ -35,8 +35,8 @@ public class GameLoop {
 
     ArrayList<Action> actions;
 
-    public GameLoop() {
-        this.table = new Table(false);
+    public GameLoop(boolean rff) {
+        this.table = new Table(rff);
         tableRunde = new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack());
         tabelVerlauf = new VerlaufTable(tableRunde);
         verlauf.zugEinfuegen(dummy, null, null, 0, "platzhalter");
@@ -62,14 +62,18 @@ public class GameLoop {
     private void init() {
         System.out.println("Welcome to JINX! How many players do you wish to play with?");
         while (true) {
-            Scanner s = new Scanner(System.in);
-            int playerCount = s.nextInt();
-            if (playerCount < 2 || playerCount > 4) {
-                System.out.println("This game is designed for 2-4 Players! Choose again!");
-            } else {
-                // set size of players to user specified value
-                this.players = new Player[playerCount];
-                break;
+            try {
+                Scanner s = new Scanner(System.in);
+                int playerCount = s.nextInt();
+                if (playerCount < 2 || playerCount > 4) {
+                    System.out.println("This game is designed for 2-4 Players! Choose again!");
+                } else {
+                    // set size of players to user specified value
+                    this.players = new Player[playerCount];
+                    break;
+                }
+            }catch (Exception e){
+                log("Enter a valid number!");
             }
         }
 
@@ -788,7 +792,7 @@ public class GameLoop {
             //ask player for name, until confirmed
             while (true) {
                 log("Welcome Player" + (i + 1) + " whats your name?");
-                String name = s.nextLine();
+                String name = s.nextLine().replaceAll(" ", "");
                 log("Are you sure your Name is: " + name + " [y/n]");
                 String con = s.nextLine();
                 //check confirmation
@@ -806,7 +810,7 @@ public class GameLoop {
      */
     private void getHighscore() {
         try {
-            BufferedReader br = new BufferedReader(new FileReader("entities/highscore.txt"));
+            BufferedReader br = new BufferedReader(new FileReader("src/entities/highscore.txt"));
 
             String line = br.readLine();
 
@@ -840,7 +844,7 @@ public class GameLoop {
      */
     private void saveHighscores() {
         try {
-            PrintWriter pw = new PrintWriter("entities/highscore.txt");
+            PrintWriter pw = new PrintWriter("src/entities/highscore.txt");
 
             for (String entry : this.highscores) {
                 pw.println(entry);
