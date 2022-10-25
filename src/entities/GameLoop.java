@@ -85,6 +85,7 @@ public class GameLoop {
     private String getPlayerInputSTR() {
         Scanner s = new Scanner(System.in);
         return s.nextLine();
+
     }
 
     /**
@@ -154,6 +155,7 @@ public class GameLoop {
                             M - Re or Undo
                             N - Bisher gespielte Zuege
                             T - bisherige Runden
+                            H - Show all previous scores
                             """);
 
                     String select = getPlayerInputSTR();
@@ -417,6 +419,9 @@ public class GameLoop {
                         case "N" -> {
                             verlauf.verlaufAnzeigen();
                         }
+                        case "H" -> {
+                            this.showHighscore();
+                        }
                         default -> log("Not an option! Try Again!");
                     }
                 }
@@ -463,6 +468,8 @@ public class GameLoop {
 
         }
         //all 3 rounds ended, calculate score here
+        this.addCurrentHighscores();
+        this.saveHighscores();
         log("Game Over!");
 
     }
@@ -808,7 +815,6 @@ public class GameLoop {
         }
     }
 
-    //TODO use both methods in game loop
 
     /**
      * shows all high scores
@@ -842,28 +848,26 @@ public class GameLoop {
      * adds Highscore of the current game, sorted by score
      */
     private void addCurrentHighscores() {
-        int score = 0;
         for (Player player : this.players) {
-            if (score < player.getScore()) {
-                score = player.getScore();
-            }
-        }
-        for (Player player : this.players) {
-            if (score == player.getScore()) {
-                ArrayList<String> newHighscore = new ArrayList<>();
-                for (String line : this.highscores) {
-                    boolean added = false;
-                    String[] nameAndScore = line.split(" ");
-                    //wenn der alte wert kleiner ist als der score, score muss also darüber, bei gleichen werten kommt der neue nach unten
-                    if (Integer.parseInt(nameAndScore[1]) < score && !added) {
-                        newHighscore.add(player.getName() + " " + player.getScore());
-                        newHighscore.add(nameAndScore[0] + " " + nameAndScore[1]);
-                    } else {
-                        newHighscore.add(nameAndScore[0] + " " + nameAndScore[1]);
-                    }
+            ArrayList<String> newHighscore = new ArrayList<>();
+            boolean added = false;
+            int lines = 0;
+            for (String line : this.highscores) {
+                lines++;
+                String[] nameAndScore = line.split(" ");
+                //wenn der alte wert kleiner ist als der score, score muss also darüber, bei gleichen werten kommt der neue nach unten
+                if (Integer.parseInt(nameAndScore[1]) < player.getScore() && !added) {
+                    newHighscore.add(player.getName() + " " + player.getScore());
+                    added=true;
+                    newHighscore.add(nameAndScore[0] + " " + nameAndScore[1]);
+                }else if(!added && this.highscores.size()==lines){
+                    newHighscore.add(nameAndScore[0] + " " + nameAndScore[1]);
+                    newHighscore.add(player.getName() + " " + player.getScore());
+                } else {
+                    newHighscore.add(nameAndScore[0] + " " + nameAndScore[1]);
                 }
-                this.highscores = newHighscore;
             }
+            this.highscores = newHighscore;
         }
     }
 }
