@@ -6,6 +6,9 @@ import entities.Player;
 
 import java.util.logging.Logger;
 
+/**
+ * Stellt den verlauf der Spielerhandlungen da
+ */
 public class Verlaufsliste {
     private Element head;
     private Element tail;
@@ -24,6 +27,14 @@ public class Verlaufsliste {
         this.position=tail;
     }
 
+    /**
+     *
+     * @param player der Spieler der den zug gemacht hat
+     * @param typ Der Typ der Karte die gespielt wurde
+     * @param farbe Die Farbe der Karte, die gespielt wurde
+     * @param wert Der Wert der Karte die gespielt wurde
+     * @param aktion Die Art und Weise wie die Karte verwedet wurde
+     */
     public void zugEinfuegen(Player player, CardType typ, CardColor farbe, int wert, String aktion){ //int aendern
         Element zug = new Element(player,typ,farbe,wert,aktion);
         Element halter = this.tail.getDavor();
@@ -40,13 +51,19 @@ public class Verlaufsliste {
             tail.setDavor(zug);
         }
     }
-    
+
+    /**
+     * Leert den gesamten Verlauf
+     */
     public void verlaufsListeReseten(){
         this.position=tail;
         this.head.setDanach(tail);
         this.tail.setDavor(head);
     }
-    
+
+    /**
+     * Gibt den bisherigen Zug Verlauf aus
+     */
     public void verlaufAnzeigen(){
         Element start =head.getDanach();
         while(start!=tail){
@@ -55,6 +72,10 @@ public class Verlaufsliste {
         }        
     }
 
+    /**
+     *
+     * @return die Anzahl der bisherigen Zuege
+     */
     public int getLaenge() {
         Element h=head;
         while(h.getDanach()!=tail){
@@ -64,10 +85,18 @@ public class Verlaufsliste {
         return laenge;
     }
 
+    /**
+     *
+     * @return liefert den Head der Liste
+     */
     public Element getHead() {
         return head;
     }
 
+    /**
+     *
+     * @return liefert den tail der Liste
+     */
     public Element getTail() {
         return tail;
     }

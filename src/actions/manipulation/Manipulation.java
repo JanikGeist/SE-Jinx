@@ -10,6 +10,9 @@ import actions.manipulation.liste.Verlaufsliste;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
+/**
+ * Steuert das vor und zurueck Springen im Spiel
+ */
 public class Manipulation {
     Verlaufsliste spieler;
     VerlaufTable tisch;
@@ -31,6 +34,9 @@ public class Manipulation {
         this.zeitreise=false;
     }
 
+    /**
+     * Auswahl ob vor oder zureck gesprungen wird und wie oft
+     */
     public void manipulation(){
 
         while(manipulieren){
@@ -69,6 +75,9 @@ public class Manipulation {
 
     }
 
+    /**
+     * Auswahl bis zu welchem Stand vor gesprungen werden soll
+     */
     private void redo(){
         boolean laufen =true;
         int index=tisch.getRundenAnzahl();
@@ -98,6 +107,9 @@ public class Manipulation {
 
     }
 
+    /**
+     * Auswahl bis zu welchem Stand zuueck gesprungen werden soll
+     */
     private void undo(){
         boolean laufen =true;
         int index=tisch.getRundenAnzahl();
@@ -122,14 +134,26 @@ public class Manipulation {
         }
     }
 
+    /**
+     *
+     * @return ob Der Spielstand veraendert wird ode rnicht
+     */
     public boolean isZeitreise() {
         return zeitreise;
     }
 
+    /**
+     *
+     * @return Der Spielzug bei dem weider eingesetzt werden soll
+     */
     public Element getAuswahlSpieler() {
         return auswahlSpieler;
     }
 
+    /**
+     *
+     * @return Die Runde und Tischkonstellation zu der gesprungen werden soll
+     */
     public TableRunde getAuswahlTisch() {
         return auswahlTisch;
     }

@@ -474,6 +474,13 @@ public class GameLoop {
 
     }
 
+    /**
+     * Veraendert den aktuuel Spielstand zu dem entsprechend ausgewaehlten Zeitpunkt aus der Re und Undofuktion
+     *
+     *
+     * @param spieler Der Zug bis zu dem die Spieler Handlungen zurueck gesetzt werden sollen
+     * @param runde Der Zug bzw die Runde  bis zu der der Tisch zurueck gestellt werden soll
+     */
     public void jump(Element spieler, TableRunde runde){
         this.table.setCardStack(runde.getNormals());
         this.table.setLuckStack(runde.getLuckys());

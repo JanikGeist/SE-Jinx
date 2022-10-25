@@ -35,6 +35,10 @@ public class Card {
         return this.cardColor;
     }
 
+    /**
+     *
+     * @return Card Typ
+     */
     public CardType getTyp() {
         return typ;
     }

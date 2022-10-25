@@ -4,6 +4,9 @@ import cards.CardColor;
 import cards.CardType;
 import entities.Player;
 
+/**
+ * Darstellugn einer einzelnen Spieleraktion
+ */
 public class Element {
     private Element danach;
     private Element davor;
@@ -26,18 +29,15 @@ public class Element {
     public void setDanach(Element danach) {
         this.danach=danach;
     }
-
     public void setDavor(Element davor) {
        this.davor=davor;
     }
-
     public Element getDavor() {
         return davor;
     }
     public Element getDanach() {
         return danach;
     }
-
     public CardType getTyp() {
         return typ;
     }
@@ -50,7 +50,6 @@ public class Element {
     public String getAktion() {
         return aktion;
     }
-
     public Player getPlayer() {
         return player;
     }

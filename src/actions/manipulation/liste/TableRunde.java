@@ -8,6 +8,9 @@ import java.util.Collections;
 import java.util.Stack;
 import java.util.logging.Logger;
 
+/**
+ * Darstellung eienr einzelnen Runde und den Zustaenden im Feld und den Stapeln
+ */
 public class TableRunde {
     static int number=0;
 
@@ -25,6 +28,11 @@ public class TableRunde {
 
     }
 
+    /**
+     *  Kopiert ein vorhandenen Array in ein anderes
+     * @param src Array das kopiert werden soll
+     * @return das neue kopierte Array
+     */
     public static Card[][] copy(Card[][] src) {
         if (src == null) {
             return null;
@@ -40,14 +48,26 @@ public class TableRunde {
         return copy;
     }
 
+    /**
+     *
+     * @return Das Spielfeld aus diesem Moment
+     */
     public Card[][] getFeld() {
         return feld;
     }
 
+    /**
+     *
+     * @return Den Zustand des Kartenstapels
+     */
     public Stack<Card> getNormals() {
         return normals;
     }
 
+    /**
+     *
+     * @return Zustand des LuckyKarten Stapels
+     */
     public Stack<LuckCard> getLuckys() {
         return luckys;
     }
