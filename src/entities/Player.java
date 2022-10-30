@@ -1,9 +1,12 @@
 package entities;
 
+import actions.Choose;
+import actions.manipulation.liste.TableRunde;
 import cards.Card;
 import cards.LuckCard;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * Class representing a player
@@ -13,6 +16,8 @@ public class Player {
     private final String name;
     private final ArrayList<Card> cards;
     private final ArrayList<LuckCard> luckCards;
+
+    private int diceCount = 0;
 
     /**
      * Constructor for a new player
@@ -105,6 +110,70 @@ public class Player {
         }
 
         return score;
+    }
+
+
+    /**
+     * Function to let the player choose a card
+     * @param table the current playing field
+     * @return true if card was chosen, false if no card was chosen
+     * */
+    public boolean chooseCard(Table table){
+        //check if player is able to choose a card
+        if(this.diceCount <= 0){
+            log("Roll the dice first!");
+            return false;
+        }
+
+        log("Which card would you like to take? Current diceCount: " + diceCount);
+        log("Enter the cards position as y,x");
+
+        //TODO swap this with the real input function!
+        Scanner s = new Scanner(System.in);
+        String[] coordsSTR = s.nextLine().split(",");
+        //TODO do it!
+
+        try{
+            //subtract one to get back to array counting
+            int[] coords = {Integer.parseInt(coordsSTR[0]) - 1, Integer.parseInt(coordsSTR[1]) - 1};
+
+            //get a card from the field
+            Card chosenOne = table.getCard(coords[0], coords[1]);
+
+            if (chosenOne == null) {
+                log("There is no card at that position!");
+                return false;
+            } else if (chosenOne.getValue() != diceCount) {
+                log("You can only choose a card equal to the value of your diceCount!");
+                table.addCard(coords[0], coords[1], chosenOne);
+                return false;
+            }
+            //add card to players hand
+            addCard(chosenOne);
+
+
+
+            //log that player has taken a card from the field
+            //TODO do the logging for undo/redo here
+            /*
+            actions.add(new Choose(player, chosenOne, coords[0], coords[1]));
+            verlauf.zugEinfuegen(player, chosenOne.getTyp(), chosenOne.getColor(), chosenOne.getValue(), "ZahlDazuVonTisch");
+            tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
+             */
+
+            //signal that player has chosen a card successfully
+            return true;
+        } catch (Exception e) {
+            log("Choose a valid combination!");
+            return false;
+        }
+    }
+
+    /**
+     * Function to easily log a msg on the console
+     * */
+    private void log(String msg) {
+        System.out.println("[JINX] " + msg);
     }
 
     @Override
