@@ -1,11 +1,13 @@
 package entities;
 
 import actions.Choose;
+import actions.Roll;
 import actions.manipulation.liste.TableRunde;
 import cards.Card;
 import cards.LuckCard;
 
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -18,6 +20,12 @@ public class Player {
     private final ArrayList<LuckCard> luckCards;
 
     private int diceCount = 0;
+
+    //needs to be reset after each round
+    private int rolls = 0;
+
+    //used to roll the dice
+    Random rand = new Random();
 
     /**
      * Constructor for a new player
@@ -167,6 +175,28 @@ public class Player {
             log("Choose a valid combination!");
             return false;
         }
+    }
+
+    /**
+     * Lets the player roll the dice
+     * Automaticly sets the players diceCount
+     * @return the number the player rolled, current DiceCount if nothing changed
+     * */
+    public int roll(){
+        if(this.rolls >= 2){
+            log("You can´t roll again! Your current eye count is " + diceCount);
+            return this.diceCount;
+        }
+
+        //Player rolls the dice
+        this.diceCount = rand.nextInt(6) + 1;
+        //log action of player for rollbacks
+        //TODO log the roll of the player here for RE/UNDO
+
+        this.rolls++;
+
+        log("You rolled a " + this.diceCount + "!");
+        return this.diceCount;
     }
 
     /**
