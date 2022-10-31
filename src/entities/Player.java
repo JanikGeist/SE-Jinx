@@ -4,6 +4,7 @@ import cards.Card;
 import cards.LuckCard;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * Class representing a player
@@ -105,6 +106,54 @@ public class Player {
         }
 
         return score;
+    }
+
+    //TODO: Add try/catch for exception handling
+
+    /**
+     * Function to get input of player as STRING
+     */
+    public String getPlayerInputSTR() {
+        Scanner s = new Scanner(System.in);
+        return s.nextLine();
+
+    }
+
+    /**
+     * Function to get input of player as INT
+     */
+    public int getPlayerInputINT(int min, int max) {
+        Scanner s = new Scanner(System.in);
+        while (true) {
+            try {
+                int ret = s.nextInt();
+                if (ret > max || ret < min) {
+                    log("Choose a number in the specified range!" + "[" + min + "," + max + "]");
+                } else {
+                    return ret;
+                }
+            } catch (Exception e) {
+                log("Enter a valid Number!");
+                //read line out of stream to clear it
+                s.nextLine();
+            }
+        }
+    }
+
+    /**
+     * Function to easily log a msg on the console
+     */
+    private void log(String msg) {
+        System.out.println("[JINX] " + msg);
+    }
+
+    /**
+     * shows player input on console
+     *
+     * @param msg
+     */
+    private void playerlog(String msg){
+        System.out.println("[" + this.getName() + "] chose " + msg);
     }
 
     @Override
