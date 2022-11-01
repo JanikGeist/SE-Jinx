@@ -3,7 +3,7 @@ package cards;
 /**
  * Class representing a card from the game JINX
  * */
-public class Card {
+public class Card implements Cloneable{
 
     private final CardColor cardColor;
     // between 1-6
@@ -19,6 +19,11 @@ public class Card {
         this.cardColor = cC;
         this.value = v;
         this.typ=CardType.NORMAL;
+    }
+
+    @Override
+    public Card clone() throws CloneNotSupportedException{
+        return (Card)super.clone();
     }
 
     /**

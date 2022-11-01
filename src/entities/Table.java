@@ -17,7 +17,7 @@ import java.util.Stack;
 /**
  * Class representing a playing field containing 2 stacks of cards and the playing field
  * */
-public class Table {
+public class Table implements Cloneable {
 
     // Stack containing all normal cards
     private  Stack<Card> cardStack;
@@ -41,17 +41,8 @@ public class Table {
         }
         initField();
     }
-    public void setCardStack(Stack<Card> cards){
-        this.cardStack=cards;
-    }
 
-    public void setField(Card[][] field) {
-        this.field = field;
-    }
 
-    public void setLuckStack(Stack<LuckCard> luckStack) {
-        this.luckStack = luckStack;
-    }
 
     //TODO: Add config to give the option of set card distribution
     /**
@@ -127,12 +118,7 @@ public class Table {
         return luckStack.pop();
     }
 
-    /**
-     * Function to get the field
-     * */
-    public Card[][] getField(){
-        return this.field;
-    }
+
 
     /**
      * Function to remove a card from the field.
@@ -240,6 +226,49 @@ public class Table {
         }
     }
 
+
+    public static Card[][] copyF(Card[][] src) {
+        if (src == null) {
+            return null;
+        }
+
+        Card[][] copy = new Card[src.length][];
+
+        for (int i = 0; i < src.length; i++) {
+            copy[i] = new Card[src[i].length];
+            System.arraycopy(src[i], 0, copy[i], 0, src[i].length);
+        }
+        return copy;
+    }
+
+    public static Stack<Card> copyC(Stack<Card> alt) {
+        if (alt == null) {
+            return null;
+        }
+        Stack<Card> neu =(Stack<Card>)alt.clone();
+        return neu;
+    }
+
+    public static Stack<LuckCard> copyL(Stack<LuckCard> alt) {
+        if (alt == null) {
+            return null;
+        }
+        Stack<LuckCard> neu =(Stack<LuckCard>)alt.clone();
+
+        return neu;
+    }
+
+
+
+
+
+    /**
+     * Function to get the field
+     * */
+    public Card[][] getField(){
+        return this.field;
+    }
+
     public Stack<Card> getCardStack() {
         return this.cardStack;
     }
@@ -247,6 +276,20 @@ public class Table {
     public Stack<LuckCard> getLuckStack() {
         return this.luckStack;
     }
+
+
+    public void setCardStack(Stack<Card> cards){
+        this.cardStack=copyC(cards);
+    }
+
+    public void setField(Card[][] field) {
+        this.field = copyF(field);
+    }
+
+    public void setLuckStack(Stack<LuckCard> luckStack) {
+        this.luckStack = copyL(luckStack);
+    }
+
 
 
 }

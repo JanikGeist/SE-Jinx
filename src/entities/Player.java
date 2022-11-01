@@ -1,24 +1,18 @@
 package entities;
 
-import actions.Choose;
-import actions.Roll;
-import actions.manipulation.liste.TableRunde;
 import cards.Card;
 import cards.LuckCard;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Class representing a player
  * */
-public class Player {
+public class Player implements Cloneable{
 
     private final String name;
-    private final ArrayList<Card> cards;
-    private final ArrayList<LuckCard> luckCards;
+    private  ArrayList<Card> cards;
+    private  ArrayList<LuckCard> luckCards;
 
     private int diceCount = 0;
 
@@ -41,6 +35,36 @@ public class Player {
         this.luckCards = new ArrayList<LuckCard>();
     }
 
+    public static ArrayList<Card> copyC(ArrayList<Card> alt) {
+        if (alt == null) {
+            return null;
+        }
+        ArrayList<Card> neu =(ArrayList<Card>) alt.clone();
+        return neu;
+    }
+
+    public static ArrayList<LuckCard> copyL(ArrayList<LuckCard> alt) {
+        if (alt == null) {
+            return null;
+        }
+        ArrayList<LuckCard> neu =(ArrayList<LuckCard>)alt.clone();
+
+        return neu;
+    }
+
+    public void setCards(ArrayList<Card> handkarten){
+        this.cards=copyC(handkarten);
+    }
+
+    public void setLuckCards(ArrayList<LuckCard> luckyKarten){
+        this.luckCards=copyL(luckyKarten);
+    }
+
+
+
+
+
+
     /**
      * returns current hand of player
      * */
@@ -61,6 +85,7 @@ public class Player {
     public String getName(){
         return this.name;
     }
+
 
     /**
      * Adds a card to the players hand
@@ -179,15 +204,6 @@ public class Player {
 
             //set the player as inactive, since this action ended his turn
             this.active = false;
-
-
-            //log that player has taken a card from the field
-            //TODO do the logging for undo/redo here
-            /*
-            actions.add(new Choose(player, chosenOne, coords[0], coords[1]));
-            verlauf.zugEinfuegen(player, chosenOne.getTyp(), chosenOne.getColor(), chosenOne.getValue(), "ZahlDazuVonTisch");
-            tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
-             */
 
             //signal that player has chosen a card successfully
             return true;
@@ -386,8 +402,7 @@ public class Player {
                     L - Play a luck card
                     C - Choose a card - this might end the round!
                     M - Re or Undo
-                    N - Bisher gespielte Zuege
-                    T - bisherige Runden
+                    N - Verlauf anzeigen
                     H - Show all previous scores
                     """);
 

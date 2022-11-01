@@ -3,7 +3,7 @@ package cards;
 /**
  * Each card can be one of 8 Colors
  * */
-public enum CardColor {
+public enum CardColor implements Cloneable{
     RED,
     GREEN,
     BLUE,

@@ -3,7 +3,7 @@ package cards;
 /**
  * A game consists of 48 normal and 12 luck cards
  * */
-public enum CardType {
+public enum CardType implements Cloneable {
     PLUSONE, //Player can increase count by one for each of these cards
     MINUSONE, //Player can decrease count by one for each of these cards
     EXTRATHROW, //Player can throw the dice again

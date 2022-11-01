@@ -1,6 +1,6 @@
 package cards;
 
-public class LuckCard {
+public class LuckCard implements Cloneable{
 
     private CardType cardType;
 
@@ -14,6 +14,11 @@ public class LuckCard {
 
     public CardType getCardType() {
         return this.cardType;
+    }
+
+    @Override
+    public LuckCard clone() throws CloneNotSupportedException{
+        return (LuckCard) super.clone();
     }
 
     @Override
