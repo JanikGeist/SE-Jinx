@@ -172,6 +172,7 @@ public class GameLoop {
                 checkPlayerHand(p);
             }
 
+
             //let the player who ended the round drop his highest card!
             currentPlayer.selectHighCard();
 
