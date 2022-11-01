@@ -2,7 +2,6 @@ package entities;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Scanner;
 
 import actions.ReUnDo.Runde;
@@ -149,6 +148,12 @@ public class GameLoop {
                         case "N" -> {
                             verlauf.verlaufAnzeigen();
                         }
+                        case "M" ->{
+                            Runde veraendert=verlauf.jump();
+                            if (!veraendert.equals(verlauf.getTail())){
+                                manipulieren(veraendert);
+                            }
+                        }
                     }
                 }
                 //make sure current player always loops, only when round is active
@@ -213,10 +218,32 @@ public class GameLoop {
             aktuelleSpielerStaende.add(dummy);
         }
 
-
         Runde neu = new Runde(aktuelleSpielerStaende, aktuellerTisch);
         verlauf.rundeHinzufuegen(neu);
     }
+
+    public void manipulieren(Runde neuerStand){
+        this.table.setField(neuerStand.getTischStand().getField());
+        this.table.setCardStack(neuerStand.getTischStand().getCardStack());
+        this.table.setLuckStack(neuerStand.getTischStand().getLuckStack());
+
+        int laenge= players.length;
+        this.players=new Player[laenge];
+        int z=0;
+        for (Player p: neuerStand.getSpieler()){
+            this.players[z]=p;
+            z++;
+        }
+        Runde vorher=verlauf.getTail().getDavor();
+        vorher.setDahinter(neuerStand);
+        verlauf.getTail().setDavor(neuerStand);
+        neuerStand.setDavor(vorher);
+        neuerStand.setDahinter(verlauf.getTail());
+        log("status updated");
+
+    }
+
+
 
 
 
