@@ -1,8 +1,5 @@
 package entities;
 
-import actions.Choose;
-import actions.Roll;
-import actions.manipulation.liste.TableRunde;
 import cards.Card;
 import cards.LuckCard;
 
@@ -254,7 +251,6 @@ public class Player {
      * @return selected Card or null if no card was selected
      * */
     public Card selectCard(){
-        Scanner s = new Scanner(System.in);
 
         log(this.name + ", choose a card");
         log("Enter 0 to not choose a card");
@@ -264,24 +260,18 @@ public class Player {
         }
 
         while(true) {
-            //TODO Change this with a good input function!
-            int input = s.nextInt();
+            int input = this.playerInputNumberInRange(1,this.cards.size());
 
             if (input == 0) {
                 log("You have not chosen a card");
                 return null;
             } else {
-                try{
-                    return cards.get(input - 1);
-                }catch (Exception e){
-                    log("Enter a valid Option!");
-                }
+                return cards.get(input - 1);
             }
         }
     }
 
     public boolean selectHighCard(){
-        Scanner s = new Scanner(System.in);
 
         //check if the player is able to drop a card
         if(this.cards.size() == 0){
@@ -312,17 +302,15 @@ public class Player {
             log(maxCards.get(i) + " - " + i);
         }
 
-        //ask the player for a card to drop until he drops one
-        while(true) {
-            //TODO Change this with a good input function!
-            int input = s.nextInt();
+        int removing = this.playerInputNumberInRange(0,maxCards.size()-1);
+        while(true){
             try{
-                //remove the card from the players hand!
-                this.cards.remove(maxCards.get(input));
+                this.cards.remove(maxCards.get(removing));
                 return true;
             }catch (Exception e){
-                log("Enter a valid Option!");
+                log("Please choose a card!");
             }
+            removing=this.playerInputNumberInRange(0,maxCards.size()-1);
         }
     }
 
@@ -333,7 +321,6 @@ public class Player {
      * @return selected Card or null if no card was selected
      * */
     public LuckCard selectLuckCard(){
-        Scanner s = new Scanner(System.in);
 
         //check if player has luck cards
         if(this.luckCards.size() == 0){
@@ -348,18 +335,14 @@ public class Player {
         }
 
         while(true) {
-            //TODO Change this with a good input function!
-            int input = s.nextInt();
+
+            int input = this.playerInputNumberInRange(1,this.luckCards.size());
 
             if (input == 0) {
                 log("You have not chosen a card to play!");
                 return null;
             } else {
-                try{
-                    return luckCards.get(input - 1);
-                }catch (Exception e){
-                    log("Enter a valid Option!");
-                }
+                return luckCards.get(input - 1);
             }
         }
     }
@@ -431,8 +414,6 @@ public class Player {
      * @return true if player selected a valid value and his diceCount was changed, false if he didnt
      * */
     public boolean mintomax(LuckCard lC, int min, int max){
-        Scanner s = new Scanner(System.in);
-
 
         //check if the card has already been used
         if(usedCards.contains(lC)){
@@ -440,12 +421,13 @@ public class Player {
             return false;
         }
 
-        log("Which number do you wish to replace your eye count with? [" + min + "," + max + "]" );
+        log("Which number do you wish to replace your eye count with? [" + min + "," + max + "] Enter 0 to abort!" );
 
-        //TODO Change this with a real input function!
-        int input = s.nextInt();
+        int input = this.playerInputNumberInRange(min,max);
 
-        if(input <= max && input >= min){
+        if(input == 0){
+            return false;
+        }else{
             //set diceCount to the input
             this.diceCount = input;
 
@@ -454,9 +436,26 @@ public class Player {
 
             log(this.name + ", your new eye count is: " + this.diceCount);
             return true;
-        }else{
-            log("You need to choose a number between 1 and 3!");
-            return false;
+        }
+    }
+
+
+    public int playerInputNumberInRange(int min, int max){
+        Scanner s = new Scanner(System.in);
+        String line = s.nextLine();
+        try{
+            int newDiceCount = Integer.parseInt(line);
+            if(newDiceCount <= max && newDiceCount >= min){
+                return newDiceCount;
+            } else if (newDiceCount == 0) {
+                return newDiceCount;
+            }else{
+                log("Enter a valid number!");
+                return this.playerInputNumberInRange(min,max);
+            }
+        } catch (NumberFormatException e) {
+            log("Please enter a number!");
+            return playerInputNumberInRange(min, max);
         }
     }
 
@@ -534,7 +533,7 @@ public class Player {
         }
 
         //check if the addition makes sense
-        if(this.diceCount < 6){
+        if(this.diceCount >= 6){
             log(name + ", this action wouldnt make much sense!");
             return false;
         }
@@ -560,7 +559,6 @@ public class Player {
      * @param table the current instance of the field
      * */
     public boolean cardSum(LuckCard lC, Table table){
-        Scanner s = new Scanner(System.in);
 
         //check if the player has rolled the dice before
         if(rolls <= 0){
@@ -730,7 +728,7 @@ public class Player {
             String[] coord = line.split(";");
             for(String c : coord){
                 try{
-                    if(!(Integer.parseInt(String.valueOf(c.charAt(0)))>4&&String.valueOf(c.charAt(1))==","&&Integer.parseInt(String.valueOf(c.charAt(2)))>4)){
+                    if(!(Integer.parseInt(String.valueOf(c.charAt(0)))<=4&&Integer.parseInt(String.valueOf(c.charAt(0)))>0&&String.valueOf(c.charAt(1))==","&&Integer.parseInt(String.valueOf(c.charAt(2)))<=4)&&Integer.parseInt(String.valueOf(c.charAt(2)))>0){
                         log("Enter valid coordinates or type 0");
                         return this.getPlayerInputMultipleCoordinates();
                     }
