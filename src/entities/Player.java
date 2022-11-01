@@ -178,14 +178,11 @@ public class Player implements Cloneable{
         log("Which card would you like to take? Current diceCount: " + diceCount);
         log("Enter the cards position as y,x");
 
-        //TODO swap this with the real input function!
-        Scanner s = new Scanner(System.in);
-        String[] coordsSTR = s.nextLine().split(",");
-        //TODO do it!
+        int[] inputCoord = this.getPlayerInputCoord();
 
         try{
             //subtract one to get back to array counting
-            int[] coords = {Integer.parseInt(coordsSTR[0]) - 1, Integer.parseInt(coordsSTR[1]) - 1};
+            int[] coords = {inputCoord[0] - 1, inputCoord[1] - 1};
 
             //get a card from the field
             Card chosenOne = table.getCard(coords[0], coords[1]);
@@ -273,7 +270,6 @@ public class Player implements Cloneable{
      * @return selected Card or null if no card was selected
      * */
     public Card selectCard(){
-        Scanner s = new Scanner(System.in);
 
         log(this.name + ", choose a card");
         log("Enter 0 to not choose a card");
@@ -283,24 +279,18 @@ public class Player implements Cloneable{
         }
 
         while(true) {
-            //TODO Change this with a good input function!
-            int input = s.nextInt();
+            int input = this.playerInputNumberInRange(1,this.cards.size());
 
             if (input == 0) {
                 log("You have not chosen a card");
                 return null;
             } else {
-                try{
-                    return cards.get(input - 1);
-                }catch (Exception e){
-                    log("Enter a valid Option!");
-                }
+                return cards.get(input - 1);
             }
         }
     }
 
     public boolean selectHighCard(){
-        Scanner s = new Scanner(System.in);
 
         //check if the player is able to drop a card
         if(this.cards.size() == 0){
@@ -331,17 +321,15 @@ public class Player implements Cloneable{
             log(maxCards.get(i) + " - " + i);
         }
 
-        //ask the player for a card to drop until he drops one
-        while(true) {
-            //TODO Change this with a good input function!
-            int input = s.nextInt();
+        int removing = this.playerInputNumberInRange(0,maxCards.size()-1);
+        while(true){
             try{
-                //remove the card from the players hand!
-                this.cards.remove(maxCards.get(input));
+                this.cards.remove(maxCards.get(removing));
                 return true;
             }catch (Exception e){
-                log("Enter a valid Option!");
+                log("Please choose a card!");
             }
+            removing=this.playerInputNumberInRange(0,maxCards.size()-1);
         }
     }
 
@@ -352,7 +340,6 @@ public class Player implements Cloneable{
      * @return selected Card or null if no card was selected
      * */
     public LuckCard selectLuckCard(){
-        Scanner s = new Scanner(System.in);
 
         //check if player has luck cards
         if(this.luckCards.size() == 0){
@@ -367,18 +354,14 @@ public class Player implements Cloneable{
         }
 
         while(true) {
-            //TODO Change this with a good input function!
-            int input = s.nextInt();
+
+            int input = this.playerInputNumberInRange(1,this.luckCards.size());
 
             if (input == 0) {
                 log("You have not chosen a card to play!");
                 return null;
             } else {
-                try{
-                    return luckCards.get(input - 1);
-                }catch (Exception e){
-                    log("Enter a valid Option!");
-                }
+                return luckCards.get(input - 1);
             }
         }
     }
@@ -449,8 +432,6 @@ public class Player implements Cloneable{
      * @return true if player selected a valid value and his diceCount was changed, false if he didnt
      * */
     public boolean mintomax(LuckCard lC, int min, int max){
-        Scanner s = new Scanner(System.in);
-
 
         //check if the card has already been used
         if(usedCards.contains(lC)){
@@ -458,12 +439,13 @@ public class Player implements Cloneable{
             return false;
         }
 
-        log("Which number do you wish to replace your eye count with? [" + min + "," + max + "]" );
+        log("Which number do you wish to replace your eye count with? [" + min + "," + max + "] Enter 0 to abort!" );
 
-        //TODO Change this with a real input function!
-        int input = s.nextInt();
+        int input = this.playerInputNumberInRange(min,max);
 
-        if(input <= max && input >= min){
+        if(input == 0){
+            return false;
+        }else{
             //set diceCount to the input
             this.diceCount = input;
 
@@ -472,9 +454,26 @@ public class Player implements Cloneable{
 
             log(this.name + ", your new eye count is: " + this.diceCount);
             return true;
-        }else{
-            log("You need to choose a number between 1 and 3!");
-            return false;
+        }
+    }
+
+
+    public int playerInputNumberInRange(int min, int max){
+        Scanner s = new Scanner(System.in);
+        String line = s.nextLine();
+        try{
+            int newDiceCount = Integer.parseInt(line);
+            if(newDiceCount <= max && newDiceCount >= min){
+                return newDiceCount;
+            } else if (newDiceCount == 0) {
+                return newDiceCount;
+            }else{
+                log("Enter a valid number!");
+                return this.playerInputNumberInRange(min,max);
+            }
+        } catch (NumberFormatException e) {
+            log("Please enter a number!");
+            return playerInputNumberInRange(min, max);
         }
     }
 
@@ -552,7 +551,7 @@ public class Player implements Cloneable{
         }
 
         //check if the addition makes sense
-        if(this.diceCount < 6){
+        if(this.diceCount >= 6){
             log(name + ", this action wouldnt make much sense!");
             return false;
         }
@@ -578,7 +577,6 @@ public class Player implements Cloneable{
      * @param table the current instance of the field
      * */
     public boolean cardSum(LuckCard lC, Table table){
-        Scanner s = new Scanner(System.in);
 
         //check if the player has rolled the dice before
         if(rolls <= 0){
@@ -597,8 +595,7 @@ public class Player implements Cloneable{
         log("Enter all cards you want to select like this: y,x;y,x;y,x;...;y,x");
         log("Enter 0 if u dont want to choose any cards!");
 
-        //TODO change this with a correct input function!
-        String input = s.nextLine();
+        String input = this.getPlayerInputMultipleCoordinates();
 
         if(input.equals("0")){
             log(name + ", you stopped the card selection!");
@@ -673,13 +670,129 @@ public class Player implements Cloneable{
     }
 
     /**
+     * player chooses an option from menu
+     *
+     * @return
+     */
+    public String getPlayerInputMenu() {
+        Scanner s = new Scanner(System.in);
+        String line = s.nextLine();
+        if((!line.equals("C"))&&(!line.equals("L"))&&(!line.equals("R")&&!line.equals("M")&&(!line.equals("N"))&&(!line.equals("T"))&&(!line.equals("H")))) {
+            log("Try again!");
+            return this.getPlayerInputMenu();
+        }
+        this.playerlog(line);
+        return line;
+
+    }
+
+    /**
+     * player can enter coordinates of card on table
+     *
+     * @return
+     */
+    public int[] getPlayerInputCoord() {
+        Scanner s = new Scanner(System.in);
+        String line = s.nextLine();
+        String[] coordsSTR = line.split(",");
+        try{
+            if(Integer.valueOf(coordsSTR[0])>4||Integer.valueOf(coordsSTR[0])<1){
+                log("Enter valid coordinates");
+                return this.getPlayerInputCoord();
+            }
+            else if(Integer.valueOf(coordsSTR[1])>4||Integer.valueOf(coordsSTR[1])<1){
+                log("Enter valid coordinates");
+                return this.getPlayerInputCoord();
+            }
+        } catch (NumberFormatException e) {
+            log("Enter coordinates in format y,x!");
+            return this.getPlayerInputCoord();
+        }
+        String coord=coordsSTR[0] + "," + coordsSTR[1];
+        this.playerlog(coord);
+        int[] coordInt = new int[2];
+        coordInt[0]=Integer.parseInt(coordsSTR[0]);
+        coordInt[1]=Integer.parseInt(coordsSTR[1]);
+        return coordInt;
+
+    }
+
+
+    /**
+     * player chooses yes or no
+     *
+     * @return
+     */
+    public String getPlayerInputYesNo() {
+        Scanner s = new Scanner(System.in);
+        String line = s.nextLine();
+        if((!line.equals("y"))&&(!line.equals("n"))){
+            log("Enter y or n!");
+            return this.getPlayerInputYesNo();
+        }
+        return line;
+
+    }
+
+    /**
+     * player can enter multiple coordinates
+     *
+     * @return
+     */
+    public String getPlayerInputMultipleCoordinates() {
+        Scanner s = new Scanner(System.in);
+        String line = s.nextLine();
+        if((!line.equals("0"))){
+            String[] coord = line.split(";");
+            for(String c : coord){
+                try{
+                    if(!(Integer.parseInt(String.valueOf(c.charAt(0)))<=4&&Integer.parseInt(String.valueOf(c.charAt(0)))>0&&String.valueOf(c.charAt(1))==","&&Integer.parseInt(String.valueOf(c.charAt(2)))<=4)&&Integer.parseInt(String.valueOf(c.charAt(2)))>0){
+                        log("Enter valid coordinates or type 0");
+                        return this.getPlayerInputMultipleCoordinates();
+                    }
+                } catch (NumberFormatException e) {
+                    log("Please enter coordinates in a valid format or type 0");
+                    return this.getPlayerInputMultipleCoordinates();
+                }
+            }
+        }
+        this.playerlog(line);
+        return line;
+
+    }
+
+
+    /**
+     * Function to get input of player as INT
+     */
+    public int getPlayerInputINT(int min, int max) {
+        Scanner s = new Scanner(System.in);
+        while (true) {
+            try {
+                int ret = s.nextInt();
+                if (ret > max || ret < min) {
+                    log("Choose a number in the specified range!" + "[" + min + "," + max + "]");
+                } else {
+                    return ret;
+                }
+            } catch (Exception e) {
+                log("Enter a valid Number!");
+                //read line out of stream to clear it
+                s.nextLine();
+            }
+        }
+    }
+
+    /**
      * Function to easily log a msg on the console
+     *
      * */
     private void log(String msg) {
         System.out.println("[JINX] " + msg);
     }
 
     /**
+<<<<<<< HEAD
      * Function to see if player is still active
      * */
     public boolean isActive(){
@@ -703,9 +816,17 @@ public class Player implements Cloneable{
     /**
      * Function to reset the rolls and the dice count
      * */
-    public void resetRolls(){
+    public void resetRolls() {
         this.rolls = 0;
         this.diceCount = 0;
+    }
+
+     /* shows player input on console
+     *
+     * @param msg
+     */
+    private void playerlog(String msg){
+        System.out.println("[" + this.getName() + "] chose " + msg);
     }
 
     @Override
