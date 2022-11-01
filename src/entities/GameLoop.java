@@ -28,6 +28,9 @@ public class GameLoop {
     Player aktiv = new Player("ak");
     Player dummy = new Player("dummy");
 
+    int currentRound = 1;
+    Player currentPlayer;
+
     TableRunde tableRunde;
     Table table;
     Player[] players;
@@ -53,7 +56,8 @@ public class GameLoop {
         //start the game loop
         this.showHighscore();
         this.saveHighscores();
-        loop();
+        impLoop();
+        //loop();
     }
 
     /**
@@ -112,6 +116,108 @@ public class GameLoop {
             }
         }
     }
+
+    /**
+     * New and improved main loop
+     * */
+    private void impLoop(){
+
+        //current player counter
+        int cP = 0;
+        //determines if a round is over
+        boolean roundOver;
+
+        // Run the loop for 3 Rounds maximum
+        while(currentRound <= 3){
+            roundOver = false;
+            //Round is only over if a player cant choose a card anymore
+            while(!roundOver){
+                // set the next player
+                currentPlayer = players[cP];
+                currentPlayer.setActive();
+                currentPlayer.clearUsedCards();
+                currentPlayer.resetRolls();
+
+                // Let the player perform certain actions until he is done
+                while(currentPlayer.isActive()){
+
+                    //display the field
+                    log("\n" + this.table.toString());
+
+                    // Let the player choose an action
+                    String action = currentPlayer.chooseAction();
+
+                    switch (action) {
+                        //let the player roll the dice
+                        case "R" -> currentPlayer.roll();
+                        case "L" -> {
+                            //let the player choose a luckCard to play
+                            LuckCard chosenOne = currentPlayer.selectLuckCard();
+
+                            //check if player selected a card
+                            if (chosenOne == null) {
+                                break;
+                            }
+
+                            //switch over all possible card types
+                            switch (chosenOne.getCardType()) {
+                                // let the player change his diceCount to a set value
+                                case ONETOTHREE -> currentPlayer.mintomax(chosenOne, 1, 3);
+                                // let the player change his diceCount to a set value
+                                case FOURTOSIX -> currentPlayer.mintomax(chosenOne, 4, 6);
+                                // give the player an extra throw
+                                case EXTRATHROW -> currentPlayer.extraThrow(chosenOne);
+                                // reduce the diceCount of the player by one
+                                case MINUSONE -> currentPlayer.minusOne(chosenOne);
+                                // increase the diceCount of the player by one
+                                case PLUSONE -> currentPlayer.plusOne(chosenOne);
+                                // let the player choose a collection of cards based on his dice count
+                                case CARDSUM -> currentPlayer.cardSum(chosenOne, this.table);
+                            }
+                        }
+                        case "C" -> {
+                            //let the player choose a card from the field
+                            boolean chosen = currentPlayer.chooseCard(this.table);
+
+                            //was the player not able to choose a card? --> end the round!
+                            if (!chosen && !currentPlayer.isActive()) {
+                                roundOver = true;
+                            }
+                        }
+                    }
+                }
+                //make sure current player always loops
+                cP = (cP + 1) % (players.length);
+            }
+
+            //clean up after round!
+
+            log("Round Over! All your cards will be checked and possibly removed now");
+            //check which cards the players have to drop
+            for (Player p : players) {
+                checkPlayerHand(p);
+            }
+
+            //let the player who ended the round drop his highest card!
+            currentPlayer.selectHighCard();
+
+            //let each player exchange a card for a luck card
+            for (Player p: players){
+                p.drawLuckCard(this.table);
+            }
+
+            //deal new cards
+            this.table.resetField();
+
+            //increase the round count
+            currentRound++;
+        }
+        //all 3 rounds ended, calculate score here
+        this.addCurrentHighscores();
+        this.saveHighscores();
+        log("Game Over!");
+    }
+
 
     /**
      * Main loop function handling the logic
@@ -481,7 +587,6 @@ public class GameLoop {
     /**
      * Veraendert den aktuuel Spielstand zu dem entsprechend ausgewaehlten Zeitpunkt aus der Re und Undofuktion
      *
-     *
      * @param spieler Der Zug bis zu dem die Spieler Handlungen zurueck gesetzt werden sollen
      * @param runde Der Zug bzw die Runde  bis zu der der Tisch zurueck gestellt werden soll
      */
@@ -803,6 +908,8 @@ public class GameLoop {
                 }
             }
         }
+        //set the first player
+        currentPlayer = players[0];
     }
 
     /**
