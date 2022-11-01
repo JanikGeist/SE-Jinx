@@ -654,7 +654,7 @@ public class GameLoop {
             log("You need to match your diceCount: " + diceCount);
             log("Enter all cards you want to select like this: y,x;y,x;y,x;...;y,x if you want to break type BREAK");
             //get input from player
-            String input = player.getPlayerInputSTR();
+            String input = player.getPlayerInputMultipleCoordinates();
             if (input.equals("BREAK")) {
                 break;
             }

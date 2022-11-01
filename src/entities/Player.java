@@ -167,10 +167,28 @@ public class Player {
 
     }
 
+    /**
+     * player can enter multiple coordinates
+     *
+     * @return
+     */
     public String getPlayerInputMultipleCoordinates() {
         Scanner s = new Scanner(System.in);
         String line = s.nextLine();
-        //TODO choosecards
+        if(line!="BREAK"){
+            String[] coord = line.split(";");
+            for(String c : coord){
+                try{
+                    if(!(Integer.parseInt(String.valueOf(c.charAt(0)))>4&&String.valueOf(c.charAt(1))==","&&Integer.parseInt(String.valueOf(c.charAt(2)))>4)){
+                        log("Enter valid coordinates or type 'BREAK'");
+                        return this.getPlayerInputMultipleCoordinates();
+                    }
+                } catch (NumberFormatException e) {
+                    log("Please enter coordinates in a valid format or type 'BREAK'");
+                    return this.getPlayerInputMultipleCoordinates();
+                }
+            }
+        }
         return line;
 
     }
