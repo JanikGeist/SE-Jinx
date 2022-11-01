@@ -23,7 +23,6 @@ public class GameLoop {
     Player currentPlayer;
     Verlauf verlauf;
 
-
     ArrayList<String> highscores;
     boolean rff;
     int cP;
