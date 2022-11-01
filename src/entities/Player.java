@@ -116,10 +116,11 @@ public class Player {
     public String getPlayerInputMenu() {
         Scanner s = new Scanner(System.in);
         String line = s.nextLine();
-        if(line!="C"&&line!="L"&&line!="R"&&line!="M"&&line!="N"&&line!="T"&&line!="H") {
+        if((!line.equals("C"))&&(!line.equals("L"))&&(!line.equals("R")&&!line.equals("M")&&(!line.equals("N"))&&(!line.equals("T"))&&(!line.equals("H")))) {
             log("Try again!");
             return this.getPlayerInputMenu();
         }
+        this.playerlog(line);
         return line;
 
     }
@@ -146,6 +147,11 @@ public class Player {
             log("Enter coordinates in format y,x!");
             return this.getPlayerInputCoord();
         }
+        String coord="";
+        for(String a:coordsSTR){
+            coord=coord+a+" ";
+        }
+        this.playerlog(coord);
         return coordsSTR;
 
     }
@@ -159,7 +165,7 @@ public class Player {
     public String getPlayerInputYesNo() {
         Scanner s = new Scanner(System.in);
         String line = s.nextLine();
-        if(line!="y"&&line!="n"){
+        if((!line.equals("y"))&&(!line.equals("n"))){
             log("Enter y or n!");
             return this.getPlayerInputYesNo();
         }
@@ -189,20 +195,11 @@ public class Player {
                 }
             }
         }
+        this.playerlog(line);
         return line;
 
     }
 
-    //TODO: Add try/catch for exception handling
-
-    /**
-     * Function to get input of player as STRING
-     */
-    public String getPlayerInputSTR() {
-        Scanner s = new Scanner(System.in);
-        return s.nextLine();
-
-    }
 
     /**
      * Function to get input of player as INT
