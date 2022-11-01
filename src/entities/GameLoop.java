@@ -133,7 +133,7 @@ public class GameLoop {
                             H - Show all previous scores
                             """);
 
-                    String select = player.getPlayerInputSTR();
+                    String select = player.getPlayerInputMenu();
 
                     switch (select) {
                         case "R" -> {
@@ -304,7 +304,7 @@ public class GameLoop {
                                         //check if player could roll again with second card
                                         if (k == 2) {
                                             log("Would you like to roll the dice again? [y/n]");
-                                            String again = player.getPlayerInputSTR();
+                                            String again = player.getPlayerInputYesNo();
                                             if (again.equals("y")) {
                                                 diceCount = rand.nextInt(6) + 1;
                                                 log("You roll the dice again and roll a " + diceCount);
@@ -351,7 +351,7 @@ public class GameLoop {
                             log("Which card would you like to take? Current diceCount: " + diceCount);
                             log("Enter the cards position as y,x");
                             //get player input and parse it into coordinates
-                            String[] coordsSTR = player.getPlayerInputSTR().split(",");
+                            String[] coordsSTR = player.getPlayerInputCoord();
                             try {
                                 //subtract one to get back to array counting
                                 int[] coords = {Integer.parseInt(coordsSTR[0]) - 1, Integer.parseInt(coordsSTR[1]) - 1};

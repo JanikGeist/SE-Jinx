@@ -108,6 +108,73 @@ public class Player {
         return score;
     }
 
+    /**
+     * player chooses an option from menu
+     *
+     * @return
+     */
+    public String getPlayerInputMenu() {
+        Scanner s = new Scanner(System.in);
+        String line = s.nextLine();
+        if(line!="C"&&line!="L"&&line!="R"&&line!="M"&&line!="N"&&line!="T"&&line!="H") {
+            log("Try again!");
+            return this.getPlayerInputMenu();
+        }
+        return line;
+
+    }
+
+    /**
+     * player can enter coordinates of card on table
+     *
+     * @return
+     */
+    public String[] getPlayerInputCoord() {
+        Scanner s = new Scanner(System.in);
+        String line = s.nextLine();
+        String[] coordsSTR = line.split(",");
+        try{
+            if(Integer.valueOf(coordsSTR[0])>4){
+                log("Enter valid coordinates");
+                return this.getPlayerInputCoord();
+            }
+            else if(Integer.valueOf(coordsSTR[0])>4){
+                log("Enter valid coordinates");
+                return this.getPlayerInputCoord();
+            }
+        } catch (NumberFormatException e) {
+            log("Enter coordinates in format y,x!");
+            return this.getPlayerInputCoord();
+        }
+        return coordsSTR;
+
+    }
+
+
+    /**
+     * player chooses yes or no
+     *
+     * @return
+     */
+    public String getPlayerInputYesNo() {
+        Scanner s = new Scanner(System.in);
+        String line = s.nextLine();
+        if(line!="y"&&line!="n"){
+            log("Enter y or n!");
+            return this.getPlayerInputYesNo();
+        }
+        return line;
+
+    }
+
+    public String getPlayerInputMultipleCoordinates() {
+        Scanner s = new Scanner(System.in);
+        String line = s.nextLine();
+        //TODO choosecards
+        return line;
+
+    }
+
     //TODO: Add try/catch for exception handling
 
     /**
