@@ -180,10 +180,9 @@ public class GameLoop {
                 p.drawLuckCard(this.table);
             }
 
-            verlaufAktualisieren(currentPlayer);
-
             //deal new cards
             this.table.resetField();
+            verlaufAktualisieren(currentPlayer);
 
             //increase the round count
             currentRound++;
@@ -195,6 +194,10 @@ public class GameLoop {
         log("Game Over!");
     }
 
+    /**
+     * fuegt die letzte Spielrunde in den Spielverlauf ein
+     * @param aktiv Spieler der den letzten Zug gemacht hat
+     */
     public void verlaufAktualisieren(Player aktiv){
         Table aktuellerTisch = new Table(rff);
         aktuellerTisch.setField(table.getField());
@@ -222,6 +225,10 @@ public class GameLoop {
         verlauf.rundeHinzufuegen(neu);
     }
 
+    /**
+     * aktualisiert die aktive Runde auf eine ausgewaehlte andere Runde
+     * @param neuerStand Runde, von der weiter gespielt werden soll
+     */
     public void manipulieren(Runde neuerStand){
         this.table.setField(neuerStand.getTischStand().getField());
         this.table.setCardStack(neuerStand.getTischStand().getCardStack());

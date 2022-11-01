@@ -5,6 +5,9 @@ import entities.Player;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
+/**
+ * Eine doppeltverkette Liste zum chronologischen Darstellen der einzelnen Runden im Spiel
+ */
 public class Verlauf {
 
     private Runde head;
@@ -23,6 +26,10 @@ public class Verlauf {
     }
 
 
+    /**
+     * setzt eine neue Runde ans ende des Verlaufs
+     * @param neu Runde die eingefuegt werden soll
+     */
     public void rundeHinzufuegen(Runde neu){
         Runde halter= tail.getDavor();
         halter.setDahinter(neu);
@@ -31,6 +38,11 @@ public class Verlauf {
         neu.setDahinter(tail);
     }
 
+    /**
+     *
+     * @param runde die geprueft werden soll, ob sie der Anfang oder das Ende ist
+     * @return ob es Kopf oder Ende ist
+     */
     public boolean headOrTail(Runde runde){
         boolean leer=false;
         if (runde.equals(head)||runde.equals(tail)||runde.equals(null)){
@@ -39,10 +51,18 @@ public class Verlauf {
         return leer;
     }
 
+    /**
+     * zum Ausgeben von Text Messages
+     * @param msg
+     */
     private void log(String msg) {
         System.out.println("[JINX] " + msg);
     }
 
+    /**
+     * Menue zum Waehlen der geplanten Re und Un Do Schritte
+     * @return
+     */
     public Runde jump(){
         aktuellePosition= tail;
 
@@ -90,6 +110,9 @@ public class Verlauf {
         }
     }
 
+    /**
+     * geht im Verlauf einen Schritt zurueck
+     */
     public void unDo(){
         if (!headOrTail(aktuellePosition.getDavor())){
             log("One step back");
@@ -101,6 +124,9 @@ public class Verlauf {
 
     }
 
+    /**
+     * geht im Verlauf einen Schritt vor
+     */
     public void reDo(){
         if (!aktuellePosition.equals(tail)){
             log("One step further");
@@ -111,6 +137,10 @@ public class Verlauf {
         }
     }
 
+    /**
+     * Gibt im Terminal eine einzelne Uebergeben Runde aus
+     * @param auswahl einzelne Runde
+     */
     public void rundeAnzeigen(Runde auswahl){
         for (Player player: auswahl.getSpieler()){
             logger.info("Spieler: "+player.getName()+"\n" +
@@ -122,6 +152,9 @@ public class Verlauf {
                 "Spielfeld:\n "+auswahl.getTischStand().toString());
     }
 
+    /**
+     * gibt im Terminal den ganzen Verlauf aus
+     */
     public void verlaufAnzeigen(){
         int runde =1;
         Runde start =head.getDahinter();
@@ -140,6 +173,10 @@ public class Verlauf {
         }
     }
 
+    /**
+     *
+     * @return das Ende der Liste
+     */
     public Runde getTail() {
         return tail;
     }

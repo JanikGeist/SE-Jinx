@@ -12,6 +12,10 @@ public class LuckCard implements Cloneable{
         this.cardType = cT;
     }
 
+    /**
+     *
+     * @return den Kartentyp
+     */
     public CardType getCardType() {
         return this.cardType;
     }
