@@ -85,37 +85,7 @@ public class GameLoop {
         initPlayers();
     }
 
-    //TODO: Add try/catch for exception handling
 
-    /**
-     * Function to get input of player as STRING
-     */
-    private String getPlayerInputSTR() {
-        Scanner s = new Scanner(System.in);
-        return s.nextLine();
-
-    }
-
-    /**
-     * Function to get input of player as INT
-     */
-    private int getPlayerInputINT(int min, int max) {
-        Scanner s = new Scanner(System.in);
-        while (true) {
-            try {
-                int ret = s.nextInt();
-                if (ret > max || ret < min) {
-                    log("Choose a number in the specified range!" + "[" + min + "," + max + "]");
-                } else {
-                    return ret;
-                }
-            } catch (Exception e) {
-                log("Enter a valid Number!");
-                //read line out of stream to clear it
-                s.nextLine();
-            }
-        }
-    }
 
     /**
      * New and improved main loop
@@ -237,6 +207,7 @@ public class GameLoop {
         for (int j = 0; j < 3; j++) {
             //current player
             int cP = 0;
+            Player player = this.players[cP];
             //player that finished a round
             int finisher = 0;
             //set false if player has no actions left --> terminating round
@@ -252,7 +223,7 @@ public class GameLoop {
                 //track played luckCards to avoid multiple uses
                 ArrayList<LuckCard> usedCards = new ArrayList<>();
                 //current player
-                Player player = this.players[cP];
+                player = this.players[cP];
                 aktiv = player;
                 //as long as player can perform an action
                 while (stillActive) {
@@ -273,7 +244,7 @@ public class GameLoop {
                             H - Show all previous scores
                             """);
 
-                    String select = getPlayerInputSTR();
+                    String select = player.getPlayerInputMenu();
 
                     switch (select) {
                         case "R" -> {
@@ -301,7 +272,7 @@ public class GameLoop {
                             }
 
                             //get chosen card pos in arraylist
-                            int num = getPlayerInputINT(0, luckCards.size()) - 1;
+                            int num = player.getPlayerInputINT(0, luckCards.size()) - 1;
                             if (num == -1) {
                                 break;
                             }
@@ -348,7 +319,7 @@ public class GameLoop {
                                         }
                                         if (otherCard != null) {
                                             log("What would you like to add? [1,2]");
-                                            int addNum = getPlayerInputINT(1, 2);
+                                            int addNum = player.getPlayerInputINT(1, 2);
                                             if (addNum == 2 && diceCount > 4) {
                                                 log("This wouldn't make much sense!");
                                                 break;
@@ -394,7 +365,7 @@ public class GameLoop {
                                         }
                                         if (otherCard != null) {
                                             log("What would you like to subtract? [1,2]");
-                                            int subNum = getPlayerInputINT(1, 2);
+                                            int subNum = player.getPlayerInputINT(1, 2);
                                             if (subNum == 2 && diceCount < 3) {
                                                 log("This wouldn't make much sense!");
                                                 break;
@@ -418,7 +389,7 @@ public class GameLoop {
                                 case FOURTOSIX -> {
                                     //player can choose a card between 4-6
                                     log("Which number do you choose? [4,6]");
-                                    diceCount = getPlayerInputINT(4, 6);
+                                    diceCount = player.getPlayerInputINT(4, 6);
                                     //remove luckCard from players hand, since its single use!
                                     player.removeLuckCard(lC);
                                     actions.add(new Luck(player, lC));
@@ -444,7 +415,7 @@ public class GameLoop {
                                         //check if player could roll again with second card
                                         if (k == 2) {
                                             log("Would you like to roll the dice again? [y/n]");
-                                            String again = getPlayerInputSTR();
+                                            String again = player.getPlayerInputYesNo();
                                             if (again.equals("y")) {
                                                 diceCount = rand.nextInt(6) + 1;
                                                 log("You roll the dice again and roll a " + diceCount);
@@ -462,7 +433,7 @@ public class GameLoop {
                                 case ONETOTHREE -> {
                                     //player can choose a card between 1-3
                                     log("Which number do you choose? [1,3]");
-                                    diceCount = getPlayerInputINT(1, 3);
+                                    diceCount = player.getPlayerInputINT(1, 3);
                                     //remove luckCard from players hand, since its single use!
                                     player.removeLuckCard(lC);
                                     actions.add(new Luck(player, lC));
@@ -477,8 +448,8 @@ public class GameLoop {
                             if (diceCount == 0) {
                                 log("Roll the dice first!");
                                 break;
-                            }
 
+                            }
                             //check if the player is able to pick a card, if not the round turn!
                             if (checkEndRound(diceCount)) {
                                 //round
@@ -486,15 +457,15 @@ public class GameLoop {
                                 stillActive = false;
                                 finisher = cP;
                                 break;
-                            }
 
+                            }
                             log("Which card would you like to take? Current diceCount: " + diceCount);
                             log("Enter the cards position as y,x");
                             //get player input and parse it into coordinates
-                            String[] coordsSTR = getPlayerInputSTR().split(",");
+                            int[] coordsSTR = player.getPlayerInputCoord();
                             try {
                                 //subtract one to get back to array counting
-                                int[] coords = {Integer.parseInt(coordsSTR[0]) - 1, Integer.parseInt(coordsSTR[1]) - 1};
+                                int[] coords = {coordsSTR[0] - 1, coordsSTR[1] - 1};
 
 
                                 //get a card from the field
@@ -561,7 +532,7 @@ public class GameLoop {
                 }
 
 
-                int selection = getPlayerInputINT(0, drops.size() - 1);
+                int selection = player.getPlayerInputINT(0, drops.size() - 1);
                 verlauf.zugEinfuegen(players[finisher], CardType.NORMAL, drops.get(selection).getColor(), drops.get(selection).getValue(), "ZahlWeg");
                 tabelVerlauf.add( new TableRunde(table.getField(), table.getCardStack(), table.getLuckStack()));
                 //remove the card
@@ -573,7 +544,7 @@ public class GameLoop {
             }
 
             //let each player draw a luckCard
-            drawLuckCards(finisher);
+            drawLuckCards(finisher, player);
 
             //deal new cards
             this.table.resetField();
@@ -641,7 +612,7 @@ public class GameLoop {
      * Function to handle the drawing of luck cards at the end a round
      * TODO Split this up into 2 methods, the choosing can be handled by a single method
      */
-    private void drawLuckCards(int finisher) {
+    private void drawLuckCards(int finisher, Player player) {
         //start with the finisher
         Card[] hand = players[finisher].getCards().toArray(new Card[0]);
         if (hand.length > 0) {
@@ -652,7 +623,7 @@ public class GameLoop {
             }
             log("Enter " + hand.length + "to not pick a card");
             //ask for input
-            int input = getPlayerInputINT(0, hand.length);
+            int input = player.getPlayerInputINT(0, hand.length);
             //only remove card if input is valid and player wants to do so!
             if (!(input < 0 || input >= hand.length)) {
                 //remove the card from players hand
@@ -686,7 +657,7 @@ public class GameLoop {
                     }
                     log("Enter " + hand.length + "to not pick a card");
                     //ask player which card he wants to drop
-                    int input = getPlayerInputINT(0, hand.length);
+                    int input = player.getPlayerInputINT(0, hand.length);
                     if (input < 0 || input >= hand.length) {
                         return;
                     } else {
@@ -793,7 +764,7 @@ public class GameLoop {
             log("You need to match your diceCount: " + diceCount);
             log("Enter all cards you want to select like this: y,x;y,x;y,x;...;y,x if you want to break type BREAK");
             //get input from player
-            String input = getPlayerInputSTR();
+            String input = player.getPlayerInputMultipleCoordinates();
             if (input.equals("BREAK")) {
                 break;
             }
@@ -922,7 +893,7 @@ public class GameLoop {
      */
     private void getHighscore() {
         try {
-            BufferedReader br = new BufferedReader(new FileReader("src/entities/highscore.txt"));
+            BufferedReader br = new BufferedReader(new FileReader("entities/highscore.txt"));
 
             String line = br.readLine();
 
@@ -956,7 +927,7 @@ public class GameLoop {
      */
     private void saveHighscores() {
         try {
-            PrintWriter pw = new PrintWriter("src/entities/highscore.txt");
+            PrintWriter pw = new PrintWriter("entities/highscore.txt");
 
             for (String entry : this.highscores) {
                 pw.println(entry);

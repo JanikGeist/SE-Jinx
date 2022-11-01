@@ -153,14 +153,11 @@ public class Player {
         log("Which card would you like to take? Current diceCount: " + diceCount);
         log("Enter the cards position as y,x");
 
-        //TODO swap this with the real input function!
-        Scanner s = new Scanner(System.in);
-        String[] coordsSTR = s.nextLine().split(",");
-        //TODO do it!
+        int[] inputCoord = this.getPlayerInputCoord();
 
         try{
             //subtract one to get back to array counting
-            int[] coords = {Integer.parseInt(coordsSTR[0]) - 1, Integer.parseInt(coordsSTR[1]) - 1};
+            int[] coords = {inputCoord[0] - 1, inputCoord[1] - 1};
 
             //get a card from the field
             Card chosenOne = table.getCard(coords[0], coords[1]);
@@ -582,8 +579,7 @@ public class Player {
         log("Enter all cards you want to select like this: y,x;y,x;y,x;...;y,x");
         log("Enter 0 if u dont want to choose any cards!");
 
-        //TODO change this with a correct input function!
-        String input = s.nextLine();
+        String input = this.getPlayerInputMultipleCoordinates();
 
         if(input.equals("0")){
             log(name + ", you stopped the card selection!");
@@ -658,13 +654,129 @@ public class Player {
     }
 
     /**
+     * player chooses an option from menu
+     *
+     * @return
+     */
+    public String getPlayerInputMenu() {
+        Scanner s = new Scanner(System.in);
+        String line = s.nextLine();
+        if((!line.equals("C"))&&(!line.equals("L"))&&(!line.equals("R")&&!line.equals("M")&&(!line.equals("N"))&&(!line.equals("T"))&&(!line.equals("H")))) {
+            log("Try again!");
+            return this.getPlayerInputMenu();
+        }
+        this.playerlog(line);
+        return line;
+
+    }
+
+    /**
+     * player can enter coordinates of card on table
+     *
+     * @return
+     */
+    public int[] getPlayerInputCoord() {
+        Scanner s = new Scanner(System.in);
+        String line = s.nextLine();
+        String[] coordsSTR = line.split(",");
+        try{
+            if(Integer.valueOf(coordsSTR[0])>4||Integer.valueOf(coordsSTR[0])<1){
+                log("Enter valid coordinates");
+                return this.getPlayerInputCoord();
+            }
+            else if(Integer.valueOf(coordsSTR[1])>4||Integer.valueOf(coordsSTR[1])<1){
+                log("Enter valid coordinates");
+                return this.getPlayerInputCoord();
+            }
+        } catch (NumberFormatException e) {
+            log("Enter coordinates in format y,x!");
+            return this.getPlayerInputCoord();
+        }
+        String coord=coordsSTR[0] + "," + coordsSTR[1];
+        this.playerlog(coord);
+        int[] coordInt = new int[2];
+        coordInt[0]=Integer.parseInt(coordsSTR[0]);
+        coordInt[1]=Integer.parseInt(coordsSTR[1]);
+        return coordInt;
+
+    }
+
+
+    /**
+     * player chooses yes or no
+     *
+     * @return
+     */
+    public String getPlayerInputYesNo() {
+        Scanner s = new Scanner(System.in);
+        String line = s.nextLine();
+        if((!line.equals("y"))&&(!line.equals("n"))){
+            log("Enter y or n!");
+            return this.getPlayerInputYesNo();
+        }
+        return line;
+
+    }
+
+    /**
+     * player can enter multiple coordinates
+     *
+     * @return
+     */
+    public String getPlayerInputMultipleCoordinates() {
+        Scanner s = new Scanner(System.in);
+        String line = s.nextLine();
+        if((!line.equals("0"))){
+            String[] coord = line.split(";");
+            for(String c : coord){
+                try{
+                    if(!(Integer.parseInt(String.valueOf(c.charAt(0)))>4&&String.valueOf(c.charAt(1))==","&&Integer.parseInt(String.valueOf(c.charAt(2)))>4)){
+                        log("Enter valid coordinates or type 0");
+                        return this.getPlayerInputMultipleCoordinates();
+                    }
+                } catch (NumberFormatException e) {
+                    log("Please enter coordinates in a valid format or type 0");
+                    return this.getPlayerInputMultipleCoordinates();
+                }
+            }
+        }
+        this.playerlog(line);
+        return line;
+
+    }
+
+
+    /**
+     * Function to get input of player as INT
+     */
+    public int getPlayerInputINT(int min, int max) {
+        Scanner s = new Scanner(System.in);
+        while (true) {
+            try {
+                int ret = s.nextInt();
+                if (ret > max || ret < min) {
+                    log("Choose a number in the specified range!" + "[" + min + "," + max + "]");
+                } else {
+                    return ret;
+                }
+            } catch (Exception e) {
+                log("Enter a valid Number!");
+                //read line out of stream to clear it
+                s.nextLine();
+            }
+        }
+    }
+
+    /**
      * Function to easily log a msg on the console
+     *
      * */
     private void log(String msg) {
         System.out.println("[JINX] " + msg);
     }
 
     /**
+<<<<<<< HEAD
      * Function to see if player is still active
      * */
     public boolean isActive(){
@@ -688,9 +800,17 @@ public class Player {
     /**
      * Function to reset the rolls and the dice count
      * */
-    public void resetRolls(){
+    public void resetRolls() {
         this.rolls = 0;
         this.diceCount = 0;
+    }
+
+     /* shows player input on console
+     *
+     * @param msg
+     */
+    private void playerlog(String msg){
+        System.out.println("[" + this.getName() + "] chose " + msg);
     }
 
     @Override
