@@ -23,7 +23,6 @@ public class GameLoop {
     Player currentPlayer;
     Verlauf verlauf;
 
-
     ArrayList<String> highscores;
     boolean rff;
     int cP;
@@ -161,7 +160,6 @@ public class GameLoop {
                     verlaufAktualisieren(currentPlayer);
                     cP = (cP + 1) % (players.length);
                 }
-
             }
 
             //clean up after round!
@@ -194,6 +192,7 @@ public class GameLoop {
         this.saveHighscores();
         log("Game Over!");
     }
+
 
     /**
      * fuegt die letzte Spielrunde in den Spielverlauf ein
@@ -329,7 +328,7 @@ public class GameLoop {
      */
     private void getHighscore() {
         try {
-            BufferedReader br = new BufferedReader(new FileReader("src/entities/highscore.txt"));
+            BufferedReader br = new BufferedReader(new FileReader("entities/highscore.txt"));
 
             String line = br.readLine();
 
@@ -344,6 +343,7 @@ public class GameLoop {
             throw new RuntimeException(e);
         }
     }
+
 
     /**
      * shows all high scores
@@ -362,7 +362,7 @@ public class GameLoop {
      */
     private void saveHighscores() {
         try {
-            PrintWriter pw = new PrintWriter("src/entities/highscore.txt");
+            PrintWriter pw = new PrintWriter("entities/highscore.txt");
 
             for (String entry : this.highscores) {
                 pw.println(entry);
