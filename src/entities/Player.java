@@ -229,6 +229,7 @@ public class Player {
             return false;
         }
 
+        log(name + ", you can choose to draw a luck card!");
         Card selected = selectCard();
 
         if(selected == null){
@@ -261,7 +262,7 @@ public class Player {
         log(this.name + ", choose a card");
         log("Enter 0 to not choose a card");
         //List all cards available to choose
-        for (int i = 1; i < cards.size(); i++) {
+        for (int i = 1; i < cards.size() + 1; i++) {
             log(cards.get(i - 1) + " - " + i);
         }
 
@@ -308,7 +309,7 @@ public class Player {
             }
         }
 
-        log(this.name + ", choose a card u wish to drop!");
+        log(this.name + ", you finished the round! Choose a card to drop!");
         //List all cards available to choose
         for (int i = 0; i < maxCards.size(); i++) {
             log(maxCards.get(i) + " - " + i);
@@ -345,7 +346,7 @@ public class Player {
         log(this.name + ", choose a card you wish to play");
         log("Enter 0 to not choose a card");
         //List all cards available to choose
-        for (int i = 1; i < luckCards.size(); i++) {
+        for (int i = 1; i < luckCards.size() + 1; i++) {
             log(luckCards.get(i - 1) + " - " + i);
         }
 

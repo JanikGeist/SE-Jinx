@@ -141,6 +141,8 @@ public class GameLoop {
                 // Let the player perform certain actions until he is done
                 while(currentPlayer.isActive()){
 
+                    //display the current round
+                    log("Round: " + currentRound);
                     //display the field
                     log("\n" + this.table.toString());
 
@@ -186,8 +188,10 @@ public class GameLoop {
                         }
                     }
                 }
-                //make sure current player always loops
-                cP = (cP + 1) % (players.length);
+                //make sure current player always loops, only when round is active
+                if(!roundOver) {
+                    cP = (cP + 1) % (players.length);
+                }
             }
 
             //clean up after round!
@@ -212,6 +216,7 @@ public class GameLoop {
             //increase the round count
             currentRound++;
         }
+
         //all 3 rounds ended, calculate score here
         this.addCurrentHighscores();
         this.saveHighscores();
