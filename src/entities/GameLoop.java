@@ -72,6 +72,11 @@ public class GameLoop {
 
         // init all players
         initPlayers();
+        /*players[0] = new Player("Werner");
+        for(int i = 1; i < players.length; i++){
+            players[i] = new Medium_AI("Hans" + i);
+        }*/
+
     }
 
 
@@ -328,7 +333,7 @@ public class GameLoop {
      */
     private void getHighscore() {
         try {
-            BufferedReader br = new BufferedReader(new FileReader("entities/highscore.txt"));
+            BufferedReader br = new BufferedReader(new FileReader("src/entities/highscore.txt"));
 
             String line = br.readLine();
 
@@ -362,7 +367,7 @@ public class GameLoop {
      */
     private void saveHighscores() {
         try {
-            PrintWriter pw = new PrintWriter("entities/highscore.txt");
+            PrintWriter pw = new PrintWriter("src/entities/highscore.txt");
 
             for (String entry : this.highscores) {
                 pw.println(entry);

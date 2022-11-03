@@ -8,31 +8,14 @@ import java.util.*;
 /**
  * Class representing a player
  * */
-public class Player implements Cloneable{
-
-    private final String name;
-    private  ArrayList<Card> cards;
-    private  ArrayList<LuckCard> luckCards;
-
-    private int diceCount = 0;
-
-    //needs to be reset after each round
-    private int rolls = 0;
-    private ArrayList<LuckCard> usedCards = new ArrayList<LuckCard>();
-
-    private boolean active = true;
-
-    //used to roll the dice
-    Random rand = new Random();
+public class Player extends Participant implements Cloneable{
 
     /**
      * Constructor for a new player
      * @param name name of player
      * */
     public Player(String name){
-        this.name = name;
-        this.cards = new ArrayList<Card>();
-        this.luckCards = new ArrayList<LuckCard>();
+        super(name);
     }
 
     public static ArrayList<Card> copyC(ArrayList<Card> alt) {
@@ -58,95 +41,6 @@ public class Player implements Cloneable{
 
     public void setLuckCards(ArrayList<LuckCard> luckyKarten){
         this.luckCards=copyL(luckyKarten);
-    }
-
-
-
-
-
-
-    /**
-     * returns current hand of player
-     * */
-    public ArrayList<Card> getCards(){
-        return this.cards;
-    }
-
-    /**
-     * returns current luckcards of player
-     * */
-    public ArrayList<LuckCard> getLuckCards(){
-        return this.luckCards;
-    }
-
-    /**
-     * returns players name
-     * */
-    public String getName(){
-        return this.name;
-    }
-
-
-    /**
-     * Adds a card to the players hand
-     * */
-    public void addCard(Card card){
-        this.cards.add(card);
-    }
-
-    /**
-     * Adds a card to the players luck cards
-     * */
-    public void addLuckCard(LuckCard luckCard){
-        this.luckCards.add(luckCard);
-    }
-
-    public void removeLuckCard(LuckCard luckCard){
-        this.luckCards.remove(luckCard);
-    }
-
-    /**
-     * Removes a card from the players hand
-     * @param pos position of card in players hand, counting from 0!
-     * @return null if no card was found otherwise card in position pos
-     * */
-    public Card removeCard(int pos){
-        try{
-            Card card = this.cards.get(pos);
-            this.cards.remove(pos);
-            return card;
-        }catch (IndexOutOfBoundsException e){
-            System.out.println("[ERROR] No Card found!");
-            return null;
-        }
-    }
-    /**
-     * Overloaded removeCard function to remove a card by reference
-     * @param card card to be removed
-     * @return true if card was remove, false if card was not found
-     * */
-    public boolean removeCard(Card card){
-        try{
-            this.cards.remove(card);
-            return true;
-        }catch (Exception e){
-            System.out.println("[ERROR] No Card found!");
-            return false;
-        }
-    }
-
-    /**
-     * Calculates the current score of the player
-     * @return current score as int
-     * */
-    public int getScore(){
-        int score = 0;
-
-        for(Card c : this.cards){
-            score += c.getValue();
-        }
-
-        return score;
     }
 
 
@@ -208,26 +102,6 @@ public class Player implements Cloneable{
             log("Choose a valid combination!");
             return false;
         }
-    }
-
-    /**
-     * Function to check if the turn of a player has to end because he cant choose a card
-     *
-     * @param table the current instance of the table
-     * @return true if player has no option, false if he does
-     */
-    private boolean checkEndRound(Table table) {
-        Card[][] field = table.getField();
-        for (Card[] row : field) {
-            for (Card c : row) {
-                if (c != null && c.getValue() == this.diceCount) {
-                    //there is a card the player can choose
-                    return false;
-                }
-            }
-        }
-        //there is no card the player can choose --> end his turn
-        return true;
     }
 
     /**
@@ -483,7 +357,7 @@ public class Player implements Cloneable{
      * */
     public boolean extraThrow(LuckCard lC){
         //check if the player still has rolls left
-        if(rolls < 2){
+        if(this.rolls < 2){
             log(this.name + ", you still have extra rolls!");
             return false;
         }
@@ -501,73 +375,6 @@ public class Player implements Cloneable{
         //add the card to the usedCards so the player cant play it again
         usedCards.add(lC);
 
-        return true;
-    }
-
-    /**
-     * Function to let the player subtract one of his diceCount
-     * @param lC the card used by the player
-     * */
-    public boolean minusOne(LuckCard lC){
-
-        //check if the player rolled the dice already
-        if(this.rolls <= 0){
-            log(name + ", roll the dice first!");
-            return false;
-        }
-
-        //check if the subtraction makes sense
-        if(this.diceCount <= 1){
-            log(name + ", this action wouldnt make much sense!");
-            return false;
-        }
-
-        //check if the player already played that card
-        if(usedCards.contains(lC)){
-            log(name + ", you have already played that card!");
-            return false;
-        }
-
-        //reduce the players diceCount
-        this.diceCount--;
-        //add card to usedCards, so it cant be played twice
-        usedCards.add(lC);
-
-        log(name + ", your new eye count is: " + this.diceCount);
-        return true;
-    }
-
-    /**
-     * Function to let the player add one to his diceCount
-     *
-     * @param lC the card used by the player
-     * */
-    public boolean plusOne(LuckCard lC){
-
-        //check if the player rolled the dice already
-        if(this.rolls <= 0){
-            log(name + ", roll the dice first!");
-            return false;
-        }
-
-        //check if the addition makes sense
-        if(this.diceCount >= 6){
-            log(name + ", this action wouldnt make much sense!");
-            return false;
-        }
-
-        //check if the player already played that card
-        if(usedCards.contains(lC)){
-            log(name + ", you have already played that card!");
-            return false;
-        }
-
-        //increase the players diceCount
-        this.diceCount++;
-        //add card to usedCards, so it cant be played twice
-        usedCards.add(lC);
-
-        log(name + ", your new eye count is: " + this.diceCount);
         return true;
     }
 
@@ -783,44 +590,6 @@ public class Player implements Cloneable{
         }
     }
 
-    /**
-     * Function to easily log a msg on the console
-     *
-     * */
-    private void log(String msg) {
-        System.out.println("[JINX] " + msg);
-    }
-
-    /**
-<<<<<<< HEAD
-     * Function to see if player is still active
-     * */
-    public boolean isActive(){
-        return this.active;
-    }
-
-    /**
-     * Function to set the player in active status
-     * */
-    public void setActive(){
-        this.active = true;
-    }
-
-    /**
-     * Function to clear the used cards
-     * */
-    public void clearUsedCards(){
-        this.usedCards.clear();
-    }
-
-    /**
-     * Function to reset the rolls and the dice count
-     * */
-    public void resetRolls() {
-        this.rolls = 0;
-        this.diceCount = 0;
-    }
-
      /* shows player input on console
      *
      * @param msg
@@ -829,33 +598,4 @@ public class Player implements Cloneable{
         System.out.println("[" + this.getName() + "] chose " + msg);
     }
 
-    @Override
-    public String toString(){
-        StringBuilder ret = new StringBuilder("");
-
-        if(this.cards.size() == 0 && this.luckCards.size() == 0){
-            return this.name + "\n[]\n[]";
-        }
-
-        ret.append(this.name);
-        ret.append("\n");
-        ret.append("[");
-        for(int i = 0; i < this.cards.size(); i++){
-            ret.append(cards.get(i).toString());
-            if(i < this.cards.size() - 1){
-                ret.append(",");
-            }
-        }
-        ret.append("]\n");
-        ret.append(" [");
-        for(int i = 0; i < this.luckCards.size(); i++){
-            ret.append(luckCards.get(i).toString());
-            if(i < this.luckCards.size() - 1){
-                ret.append(",");
-            }
-        }
-        ret.append("]\n");
-
-        return ret.toString();
-    }
 }
