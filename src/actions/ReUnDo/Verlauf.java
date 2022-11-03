@@ -1,5 +1,6 @@
 package actions.ReUnDo;
 
+import entities.Participant;
 import entities.Player;
 
 import java.util.Scanner;
@@ -142,7 +143,7 @@ public class Verlauf {
      * @param auswahl einzelne Runde
      */
     public void rundeAnzeigen(Runde auswahl){
-        for (Player player: auswahl.getSpieler()){
+        for (Participant player: auswahl.getSpieler()){
             logger.info("Spieler: "+player.getName()+"\n" +
                     "Handkarten: "+player.getCards()+"\n" +
                     "LuckyKarten: "+player.getLuckCards()+"\n");
@@ -160,7 +161,7 @@ public class Verlauf {
         Runde start =head.getDahinter();
         while (!start.equals(tail)){
             logger.info(runde+". Zug: \n"+runde);
-            for (Player player: start.getSpieler()){
+            for (Participant player: start.getSpieler()){
                 logger.info("Spieler: "+player.getName()+"\n" +
                         "Handkarten: "+player.getCards()+"\n" +
                         "LuckyKarten: "+player.getLuckCards()+"\n");

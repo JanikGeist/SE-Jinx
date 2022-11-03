@@ -1,5 +1,6 @@
 package actions.ReUnDo;
 
+import entities.Participant;
 import entities.Player;
 import entities.Table;
 
@@ -11,13 +12,13 @@ import java.util.ArrayList;
  */
 public class Runde {
 
-    private ArrayList<Player> spieler;
+    private ArrayList<Participant> spieler;
     private Table tischStand;
 
     private Runde davor;
     private Runde dahinter;
 
-    public Runde(ArrayList<Player> spieler, Table tischStand){
+    public Runde(ArrayList<Participant> spieler, Table tischStand){
         this.spieler=spieler;
         this.tischStand=tischStand;
         this.davor=null;
@@ -60,7 +61,7 @@ public class Runde {
      *
      * @return die Spieler der Runde und somit ihre Spielstaende
      */
-    public ArrayList<Player> getSpieler() {
+    public ArrayList<Participant> getSpieler() {
         return spieler;
     }
 

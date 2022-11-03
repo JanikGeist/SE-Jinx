@@ -6,7 +6,7 @@ import cards.LuckCard;
 import java.util.ArrayList;
 import java.util.Random;
 
-abstract class Participant {
+public abstract class Participant {
 
     protected String name;
     protected ArrayList<Card> cards;
@@ -55,6 +55,31 @@ abstract class Participant {
      * */
     public ArrayList<LuckCard> getLuckCards(){
         return this.luckCards;
+    }
+
+    public static ArrayList<Card> copyC(ArrayList<Card> alt) {
+        if (alt == null) {
+            return null;
+        }
+        ArrayList<Card> neu =(ArrayList<Card>) alt.clone();
+        return neu;
+    }
+
+    public static ArrayList<LuckCard> copyL(ArrayList<LuckCard> alt) {
+        if (alt == null) {
+            return null;
+        }
+        ArrayList<LuckCard> neu =(ArrayList<LuckCard>)alt.clone();
+
+        return neu;
+    }
+
+    public void setCards(ArrayList<Card> handkarten){
+        this.cards=copyC(handkarten);
+    }
+
+    public void setLuckCards(ArrayList<LuckCard> luckyKarten){
+        this.luckCards=copyL(luckyKarten);
     }
 
     /**

@@ -18,9 +18,9 @@ public class GameLoop {
 
     int currentRound;
 
-    Player[] players;
+    Participant[] players;
     Table table;
-    Player currentPlayer;
+    Participant currentPlayer;
     Verlauf verlauf;
 
     ArrayList<String> highscores;
@@ -62,7 +62,7 @@ public class GameLoop {
                     System.out.println("This game is designed for 2-4 Players! Choose again!");
                 } else {
                     // set size of players to user specified value
-                    this.players = new Player[playerCount];
+                    this.players = new Participant[playerCount];
                     break;
                 }
             }catch (Exception e){
@@ -171,7 +171,7 @@ public class GameLoop {
 
             log("Round Over! All your cards will be checked and possibly removed now");
             //check which cards the players have to drop
-            for (Player p : players) {
+            for (Participant p : players) {
                 checkPlayerHand(p);
             }
 
@@ -180,7 +180,7 @@ public class GameLoop {
             currentPlayer.selectHighCard();
 
             //let each player exchange a card for a luck card
-            for (Player p: players){
+            for (Participant p: players){
                 p.drawLuckCard(this.table);
             }
 
@@ -203,24 +203,24 @@ public class GameLoop {
      * fuegt die letzte Spielrunde in den Spielverlauf ein
      * @param aktiv Spieler der den letzten Zug gemacht hat
      */
-    public void verlaufAktualisieren(Player aktiv){
+    public void verlaufAktualisieren(Participant aktiv){
         Table aktuellerTisch = new Table(rff);
         aktuellerTisch.setField(table.getField());
         aktuellerTisch.setCardStack(table.getCardStack());
         aktuellerTisch.setLuckStack(table.getLuckStack());
 
-        ArrayList<Player> aktuelleSpielerStaende= new ArrayList<>();
-        Player ak= new Player(aktiv.getName());
+        ArrayList<Participant> aktuelleSpielerStaende= new ArrayList<>();
+        Participant ak= new Player(aktiv.getName());
         ak.setCards(aktiv.getCards());
         ak.setLuckCards(aktiv.getLuckCards());
         for (int i=cP; i<players.length; i++){
-            Player dummy= new Player(players[i].getName());
+            Participant dummy= new Player(players[i].getName());
             dummy.setCards(players[i].getCards());
             dummy.setLuckCards(players[i].getLuckCards());
             aktuelleSpielerStaende.add(dummy);
         }
         for (int i=0; i<cP; i++){
-            Player dummy= new Player(players[i].getName());
+            Participant dummy= new Player(players[i].getName());
             dummy.setCards(players[i].getCards());
             dummy.setLuckCards(players[i].getLuckCards());
             aktuelleSpielerStaende.add(dummy);
@@ -242,7 +242,7 @@ public class GameLoop {
         int laenge= players.length;
         this.players=new Player[laenge];
         int z=0;
-        for (Player p: neuerStand.getSpieler()){
+        for (Participant p: neuerStand.getSpieler()){
             this.players[z]=p;
             z++;
         }
@@ -262,7 +262,7 @@ public class GameLoop {
     /**
      * Function to remove cards from player hand if round ends
      */
-    private void checkPlayerHand(Player p) {
+    private void checkPlayerHand(Participant p) {
         Card[] hand = p.getCards().toArray(new Card[0]);
         Card[][] field = this.table.getField();
 
@@ -382,7 +382,7 @@ public class GameLoop {
      * adds Highscore of the current game, sorted by score
      */
     private void addCurrentHighscores() {
-        for (Player player : this.players) {
+        for (Participant player : this.players) {
             ArrayList<String> newHighscore = new ArrayList<>();
             boolean added = false;
             int lines = 0;
