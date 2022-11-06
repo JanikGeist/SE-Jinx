@@ -14,7 +14,7 @@ import java.util.Scanner;
 public class Player {
 
     private final String name;
-    private final ArrayList<Card> cards;
+    final ArrayList<Card> cards;
     private final ArrayList<LuckCard> luckCards;
 
     int diceCount = 0;
