@@ -71,7 +71,9 @@ public class GameLoop {
         }
 
         // init all players
-        initPlayers();
+        //initPlayers();
+        this.players[0] = new Player("a");
+        this.players[1] = new MediumAI("Werner");
     }
 
 
@@ -95,10 +97,6 @@ public class GameLoop {
                 currentPlayer.setActive();
                 currentPlayer.clearUsedCards();
                 currentPlayer.resetRolls();
-
-
-                //TEST
-                currentPlayer = new MediumAI("Werner");
 
                 // Let the player perform certain actions until he is done
                 while(currentPlayer.isActive()){

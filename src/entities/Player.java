@@ -787,7 +787,7 @@ public class Player implements Cloneable{
      * Function to easily log a msg on the console
      *
      * */
-    private void log(String msg) {
+    void log(String msg) {
         System.out.println("[JINX] " + msg);
     }
 
