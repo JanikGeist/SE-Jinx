@@ -17,11 +17,11 @@ public class Player {
     private final ArrayList<Card> cards;
     private final ArrayList<LuckCard> luckCards;
 
-    private int diceCount = 0;
+    int diceCount = 0;
 
     //needs to be reset after each round
-    private int rolls = 0;
-    private ArrayList<LuckCard> usedCards = new ArrayList<LuckCard>();
+    int rolls = 0;
+    ArrayList<LuckCard> usedCards = new ArrayList<LuckCard>();
 
     private boolean active = true;
 
@@ -351,7 +351,7 @@ public class Player {
      * Lets the player choose an action he wants to perform
      * @return returns the chosen action!
      * */
-    public String chooseAction(){
+    public String chooseAction(Table table){
 
         String[] actions = {"R","L","C","M","N","T","H"};
 
@@ -769,7 +769,7 @@ public class Player {
      * Function to easily log a msg on the console
      *
      * */
-    private void log(String msg) {
+    public void log(String msg) {
         System.out.println("[JINX] " + msg);
     }
 

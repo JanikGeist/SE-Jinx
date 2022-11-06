@@ -117,7 +117,7 @@ public class GameLoop {
                     log("\n" + this.table.toString());
 
                     // Let the player choose an action
-                    String action = currentPlayer.chooseAction();
+                    String action = currentPlayer.chooseAction(this.table);
 
                     switch (action) {
                         //let the player roll the dice
@@ -872,6 +872,12 @@ public class GameLoop {
         for (int i = 0; i < players.length; i++) {
             //ask player for name, until confirmed
             while (true) {
+                log("Is the Player an AI? Type y to confirm");
+                String ai = s.nextLine();
+                if(ai.equals("y")){
+                    players[i] = new AIPLayer3("Bot");
+                    break;
+                }
                 log("Welcome Player" + (i + 1) + " whats your name?");
                 String name = s.nextLine().replaceAll(" ", "");
                 log("Are you sure your Name is: " + name + " [y/n]");
