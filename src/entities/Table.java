@@ -145,6 +145,51 @@ public class Table implements Cloneable {
     }
 
     /**
+     * Function to remove a card from the field.
+     * !Function removes the card from the field if it exists!
+     * @param card the card to get from the field
+     * @return card, null if there is none
+     * */
+    public Card getCard(Card card){
+
+        //iterate over each card on the table
+        for(int x=0; x < 4; x++){
+            for(int y=0; y < 4; y++){
+                if(card == this.field[x][y]){
+                    //delete card from field
+                    this.field[x][y] = null;
+                    //return the card if found
+                    return card;
+                }
+            }
+        }
+
+        //return null if no card was found
+        return null;
+    }
+
+    /**
+     * Function to check a card from the field.
+     * @param x x coordinate of card
+     * @param y y coordinate of card
+     * @return card at position x,y, null if there is none
+     * !Doesn't delete the card from the field!
+     * */
+    public Card checkCard(int x,int y){
+
+        Card selected = null;
+        //find card at coords (x,y) on field
+        try {
+            selected = this.field[x][y];
+        }catch(Exception e){
+            System.out.println("");
+        }
+
+        //return selected Card
+        return selected;
+    }
+
+    /**
      * Function to add a card to the field
      * @param x x coordinate of card
      * @param y y coordinate of card

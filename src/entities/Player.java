@@ -10,17 +10,17 @@ import java.util.*;
  * */
 public class Player implements Cloneable{
 
-    private final String name;
-    private  ArrayList<Card> cards;
-    private  ArrayList<LuckCard> luckCards;
+    protected final String name;
+    protected  ArrayList<Card> cards;
+    protected  ArrayList<LuckCard> luckCards;
 
-    private int diceCount = 0;
+    protected int diceCount = 0;
 
     //needs to be reset after each round
-    private int rolls = 0;
-    private ArrayList<LuckCard> usedCards = new ArrayList<LuckCard>();
+    protected int rolls = 0;
+    protected ArrayList<LuckCard> usedCards = new ArrayList<LuckCard>();
 
-    private boolean active = true;
+    protected boolean active = true;
 
     //used to roll the dice
     Random rand = new Random();
@@ -216,7 +216,7 @@ public class Player implements Cloneable{
      * @param table the current instance of the table
      * @return true if player has no option, false if he does
      */
-    private boolean checkEndRound(Table table) {
+    protected boolean checkEndRound(Table table) {
         Card[][] field = table.getField();
         for (Card[] row : field) {
             for (Card c : row) {
@@ -370,7 +370,7 @@ public class Player implements Cloneable{
      * Lets the player choose an action he wants to perform
      * @return returns the chosen action!
      * */
-    public String chooseAction(){
+    public String chooseAction(Table table){
 
         String[] actions = {"R","L","C","M","N","T","H"};
 

@@ -96,6 +96,10 @@ public class GameLoop {
                 currentPlayer.clearUsedCards();
                 currentPlayer.resetRolls();
 
+
+                //TEST
+                currentPlayer = new MediumAI("Werner");
+
                 // Let the player perform certain actions until he is done
                 while(currentPlayer.isActive()){
 
@@ -105,7 +109,7 @@ public class GameLoop {
                     log("\n" + this.table.toString());
 
                     // Let the player choose an action
-                    String action = currentPlayer.chooseAction();
+                    String action = currentPlayer.chooseAction(this.table);
 
                     switch (action) {
                         //let the player roll the dice
@@ -321,6 +325,7 @@ public class GameLoop {
         }
         //set the first player
         currentPlayer = players[0];
+
     }
 
     /**
@@ -328,7 +333,7 @@ public class GameLoop {
      */
     private void getHighscore() {
         try {
-            BufferedReader br = new BufferedReader(new FileReader("entities/highscore.txt"));
+            BufferedReader br = new BufferedReader(new FileReader("src/entities/highscore.txt"));
 
             String line = br.readLine();
 
@@ -362,7 +367,7 @@ public class GameLoop {
      */
     private void saveHighscores() {
         try {
-            PrintWriter pw = new PrintWriter("entities/highscore.txt");
+            PrintWriter pw = new PrintWriter("src/entities/highscore.txt");
 
             for (String entry : this.highscores) {
                 pw.println(entry);
