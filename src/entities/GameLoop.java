@@ -26,6 +26,7 @@ public class GameLoop {
     ArrayList<String> highscores;
     boolean rff;
     int cP;
+    int anzahlKI;
 
     public GameLoop(boolean rff) {
         this.rff=rff;
@@ -34,6 +35,7 @@ public class GameLoop {
         this.getHighscore();
         this.verlauf = new Verlauf();
         this.cP=0;
+        this.anzahlKI=0;
     }
 
     /**
@@ -53,27 +55,37 @@ public class GameLoop {
      * Function to initialize everything needed
      */
     private void init() {
-        System.out.println("Welcome to JINX! How many players do you wish to play with?");
+        System.out.println("Welcome to JINX! How many players do you wish to play with? (2-4 Players)");
+        int playerCount;
         while (true) {
             try {
                 Scanner s = new Scanner(System.in);
-                int playerCount = s.nextInt();
+                playerCount = s.nextInt();
+
                 if (playerCount < 2 || playerCount > 4) {
                     System.out.println("This game is designed for 2-4 Players! Choose again!");
                 } else {
                     // set size of players to user specified value
                     this.players = new Player[playerCount];
+
+                    System.out.println("Please tell us if you like do modifier any player into KI: y/n");
+                    String kiInvolvieren=s.next();
+                    if (kiInvolvieren.equals("y")){
+                        initKI();
+                    }
+                    else{
+                        System.out.println("No KI's involved in this game.");
+                    }
                     break;
                 }
             }catch (Exception e){
                 log("Enter a valid number!");
             }
         }
-
-        // init all players
-        //initPlayers();
-        this.players[0] = new Player("a");
-        this.players[1] = new MediumAI("Werner");
+        if (playerCount!=anzahlKI){
+            // init all players
+            initPlayers();
+        }
     }
 
 
@@ -306,7 +318,7 @@ public class GameLoop {
         Scanner s = new Scanner(System.in);
 
         //create as many players as needed
-        for (int i = 0; i < players.length; i++) {
+        for (int i = 0; i < players.length-anzahlKI; i++) {
             //ask player for name, until confirmed
             while (true) {
                 log("Welcome Player" + (i + 1) + " whats your name?");
@@ -401,5 +413,66 @@ public class GameLoop {
             }
             this.highscores = newHighscore;
         }
+    }
+
+    public void initKI(){
+        int players=this.players.length;
+        ArrayList<Player> ki = new ArrayList<>();
+        while(true){
+            System.out.println("This game will have "+players+ "players. Choose between 0-"+players+".\n" +
+                    "How many do you want to substitute with KI's?");
+            Scanner s = new Scanner(System.in);
+            String kiAnzahl = s.next();
+            try{
+                int anzahl = Integer.parseInt(kiAnzahl);
+                if (anzahl>0&&anzahl<=players){
+                    for (int a=0; a<anzahl; a++){
+                        ki.add(buildingKI());
+                    }
+                }
+                else{
+                    System.out.println("Incorrect input.");
+                }
+            }
+            catch (NumberFormatException n){
+                System.out.println("Not an acceptable answer. You will play without any KI.");
+            }
+        }
+    }
+
+    public Player buildingKI(){
+        Player k;
+        String name="";
+        String level="";
+        Scanner s = new Scanner(System.in);
+        while (true){
+            System.out.println("Please enter a Name for your KI:");
+            name=s.next();
+            if (!name.equals("")){
+                System.out.println("Please choose a level for your KI:"+
+                        "easy / medium / hard");
+                level=s.next();
+                if (level.equals("easy")){
+                    k = new EasyKI(name);
+                    break;
+                }
+                else if (level.equals("medium")){
+                    k = new MediumAI(name);
+                    break;
+                }
+                else if (level.equals("hard")){
+                    //TODO: Leonies Teil einfuegen
+                }
+                else{
+                    System.out.println("Not an option. Try again.");
+                }
+            }
+            else{
+                System.out.println("Wrong input.");
+            }
+        }
+        System.out.println("You created: KI: "+ k.getName()+ "Level: "+ k.getClass());
+        this.anzahlKI++;
+        return k;
     }
 }
