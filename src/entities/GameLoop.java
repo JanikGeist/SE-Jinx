@@ -36,6 +36,7 @@ public class GameLoop {
         this.verlauf = new Verlauf();
         this.cP=0;
         this.anzahlKI=0;
+        this.currentRound=1;
     }
 
     /**
@@ -318,7 +319,7 @@ public class GameLoop {
         Scanner s = new Scanner(System.in);
 
         //create as many players as needed
-        for (int i = 0; i < players.length-anzahlKI; i++) {
+        for (int i = anzahlKI; i < players.length; i++) {
             //ask player for name, until confirmed
             while (true) {
                 log("Welcome Player" + (i + 1) + " whats your name?");
@@ -419,7 +420,7 @@ public class GameLoop {
         int players=this.players.length;
         ArrayList<Player> ki = new ArrayList<>();
         while(true){
-            System.out.println("This game will have "+players+ "players. Choose between 0-"+players+".\n" +
+            System.out.println("This game will have "+players+ " players. Choose between 0-"+players+".\n" +
                     "How many do you want to substitute with KI's?");
             Scanner s = new Scanner(System.in);
             String kiAnzahl = s.next();
@@ -429,6 +430,12 @@ public class GameLoop {
                     for (int a=0; a<anzahl; a++){
                         ki.add(buildingKI());
                     }
+                    int b=0;
+                    for (Player p: ki){
+                        this.players[b]=p;
+                        b++;
+                    }
+                    break;
                 }
                 else{
                     System.out.println("Incorrect input.");
@@ -449,7 +456,7 @@ public class GameLoop {
             System.out.println("Please enter a Name for your KI:");
             name=s.next();
             if (!name.equals("")){
-                System.out.println("Please choose a level for your KI:"+
+                System.out.println("Please choose a level for your KI:  "+
                         "easy / medium / hard");
                 level=s.next();
                 if (level.equals("easy")){
@@ -471,7 +478,7 @@ public class GameLoop {
                 System.out.println("Wrong input.");
             }
         }
-        System.out.println("You created: KI: "+ k.getName()+ "Level: "+ k.getClass());
+        System.out.println("You created: KI: "+ k.getName()+ "  Level: "+ k.getClass().getSimpleName());
         this.anzahlKI++;
         return k;
     }
