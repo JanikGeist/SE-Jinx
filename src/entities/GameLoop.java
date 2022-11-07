@@ -416,6 +416,9 @@ public class GameLoop {
         }
     }
 
+    /**
+     * Ki menue, Auswahl der Anzahl der KIs im Spiel und deren Initialisierung
+     */
     public void initKI(){
         int players=this.players.length;
         ArrayList<Player> ki = new ArrayList<>();
@@ -447,6 +450,10 @@ public class GameLoop {
         }
     }
 
+    /**
+     * erstellt individuelle KI
+     * @return einzelne KI
+     */
     public Player buildingKI(){
         Player k;
         String name="";

@@ -4,7 +4,10 @@ import cards.Card;
 import cards.CardColor;
 
 public class EasyKI extends Player{
-
+    /**
+     * class to define die first Level KI easy
+     * @param name name of KI
+     */
     public EasyKI (String name){
         super(name);
     }
@@ -31,6 +34,11 @@ public class EasyKI extends Player{
 
     }
 
+    /**
+     *  checks if a card with the same number as dicecount is on the table
+     * @param table table and cards from this round
+     * @return the card or null if not
+     */
     private Card cardAvailable(Table table){
         Card[][] karten= table.getField();
         for (int a=0; a<karten.length; a++){
