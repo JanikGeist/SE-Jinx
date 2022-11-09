@@ -16,11 +16,11 @@ import cards.LuckCard;
  */
 public class GameLoop {
 
-    int currentRound;
+    static int currentRound = 1;
+    Player currentPlayer;
 
     Player[] players;
     Table table;
-    Player currentPlayer;
     Verlauf verlauf;
 
     ArrayList<String> highscores;
@@ -127,7 +127,7 @@ public class GameLoop {
                         case "R" -> currentPlayer.roll();
                         case "L" -> {
                             //let the player choose a luckCard to play
-                            LuckCard chosenOne = currentPlayer.selectLuckCard();
+                            LuckCard chosenOne = currentPlayer.selectLuckCard(this.table);
 
                             //check if player selected a card
                             if (chosenOne == null) {
@@ -191,7 +191,7 @@ public class GameLoop {
 
             //let each player exchange a card for a luck card
             for (Player p: players){
-                p.drawLuckCard(this.table);
+                p.drawLuckCard(this.table,players);
             }
 
             //deal new cards
@@ -475,7 +475,7 @@ public class GameLoop {
                     break;
                 }
                 else if (level.equals("hard")){
-                    //TODO: Leonies Teil einfuegen
+                    k=new AIPLayer3(name);
                 }
                 else{
                     System.out.println("Not an option. Try again.");
