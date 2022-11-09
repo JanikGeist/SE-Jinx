@@ -17,6 +17,7 @@ public class Player implements Cloneable{
 
     //time between msgs and actions
     protected int sleepTime = 2000;
+    protected boolean manualNextMsg = true;
 
     protected int diceCount = 0;
 
@@ -42,9 +43,10 @@ public class Player implements Cloneable{
     /**
     * Overloaded Constructor to support sleeptimers
     * */
-    public Player(String name, int sleepTime){
+    public Player(String name, int sleepTime, boolean manualNextMsg){
         this.name = name;
         this.sleepTime = sleepTime;
+        this.manualNextMsg = manualNextMsg;
         this.cards = new ArrayList<Card>();
         this.luckCards = new ArrayList<LuckCard>();
     }
@@ -802,12 +804,17 @@ public class Player implements Cloneable{
      *
      * */
     void log(String msg) {
-        System.out.println("[JINX] " + msg);
-        try {
-            Thread.sleep(sleepTime);
-        }catch (Exception e){
-            System.out.println("Sleep exception!");
+        if(manualNextMsg){
+            Scanner s = new Scanner(System.in);
+            s.nextLine();
+        }else {
+            try {
+                Thread.sleep(sleepTime);
+            } catch (Exception e) {
+                System.out.println("Sleep exception!");
+            }
         }
+        System.out.println("[JINX] " + msg);
     }
 
     /**
