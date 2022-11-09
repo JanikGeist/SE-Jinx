@@ -1,13 +1,8 @@
 package entities;
 
 import cards.Card;
-import cards.CardColor;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 
 public class MediumAI extends Player{
     /**
@@ -59,7 +54,7 @@ public class MediumAI extends Player{
      * Function to let the AI choose a card
      * Sets isActive according to the AIs action
      * AI chose a card --> isActive = false;
-     * AI wasnt able to choose a card --> isActive = false
+     * AI wasn't able to choose a card --> isActive = false
      * @param table the current playing field
      * @return true if card was chosen, false if no card was chosen
      * */

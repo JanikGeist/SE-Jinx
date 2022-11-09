@@ -18,6 +18,9 @@ public class GameLoop {
 
     int currentRound;
 
+    //time between msgs and actions
+    protected int sleepTime = 2000;
+
     Player[] players;
     Table table;
     Player currentPlayer;
@@ -294,6 +297,11 @@ public class GameLoop {
      */
     private void log(String msg) {
         System.out.println("[JINX] " + msg);
+        try {
+            Thread.sleep(sleepTime);
+        }catch (Exception e){
+            System.out.println("Sleep exception!");
+        }
     }
 
 

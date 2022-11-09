@@ -3,6 +3,7 @@ package entities;
 import cards.Card;
 import cards.LuckCard;
 
+import java.security.spec.ECField;
 import java.util.*;
 
 /**
@@ -13,6 +14,9 @@ public class Player implements Cloneable{
     protected final String name;
     protected  ArrayList<Card> cards;
     protected  ArrayList<LuckCard> luckCards;
+
+    //time between msgs and actions
+    protected int sleepTime = 2000;
 
     protected int diceCount = 0;
 
@@ -31,6 +35,16 @@ public class Player implements Cloneable{
      * */
     public Player(String name){
         this.name = name;
+        this.cards = new ArrayList<Card>();
+        this.luckCards = new ArrayList<LuckCard>();
+    }
+
+    /**
+    * Overloaded Constructor to support sleeptimers
+    * */
+    public Player(String name, int sleepTime){
+        this.name = name;
+        this.sleepTime = sleepTime;
         this.cards = new ArrayList<Card>();
         this.luckCards = new ArrayList<LuckCard>();
     }
@@ -789,10 +803,14 @@ public class Player implements Cloneable{
      * */
     void log(String msg) {
         System.out.println("[JINX] " + msg);
+        try {
+            Thread.sleep(sleepTime);
+        }catch (Exception e){
+            System.out.println("Sleep exception!");
+        }
     }
 
     /**
-<<<<<<< HEAD
      * Function to see if player is still active
      * */
     public boolean isActive(){
