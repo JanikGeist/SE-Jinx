@@ -216,7 +216,7 @@ public class Player {
      * @param table the current instance of the table
      * @return returns true if the player has chosen a luckCard, false if he didnt
      * */
-    public boolean drawLuckCard(Table table){
+    public boolean drawLuckCard(Table table, Player[] players){
         //check if player has cards on his hand to exchange for a luck card
         if(this.cards.size() == 0){
             log(this.name + ", you dont have any cards to exchange for a luck card!");
@@ -224,7 +224,7 @@ public class Player {
         }
 
         log(name + ", you can choose to draw a luck card!");
-        Card selected = selectCard();
+        Card selected = selectCard(players);
 
         if(selected == null){
             log(this.name + ", you didnt choose a card");
@@ -250,7 +250,7 @@ public class Player {
      * Doesnt remove the card from players hand!
      * @return selected Card or null if no card was selected
      * */
-    public Card selectCard(){
+    public Card selectCard(Player[] players){
 
         log(this.name + ", choose a card");
         log("Enter 0 to not choose a card");
@@ -320,7 +320,7 @@ public class Player {
      * Doesnt remove the card from players hand!
      * @return selected Card or null if no card was selected
      * */
-    public LuckCard selectLuckCard(){
+    public LuckCard selectLuckCard(Table table){
 
         //check if player has luck cards
         if(this.luckCards.size() == 0){
@@ -577,7 +577,7 @@ public class Player {
         log("Enter all cards you want to select like this: y,x;y,x;y,x;...;y,x");
         log("Enter 0 if u dont want to choose any cards!");
 
-        String input = this.getPlayerInputMultipleCoordinates();
+        String input = this.getPlayerInputMultipleCoordinates(table);
 
         if(input.equals("0")){
             log(name + ", you stopped the card selection!");
@@ -721,7 +721,7 @@ public class Player {
      *
      * @return
      */
-    public String getPlayerInputMultipleCoordinates() {
+    public String getPlayerInputMultipleCoordinates(Table table) {
         Scanner s = new Scanner(System.in);
         String line = s.nextLine();
         if((!line.equals("0"))){
@@ -730,11 +730,11 @@ public class Player {
                 try{
                     if(!(Integer.parseInt(String.valueOf(c.charAt(0)))<=4&&Integer.parseInt(String.valueOf(c.charAt(0)))>0&&String.valueOf(c.charAt(1))==","&&Integer.parseInt(String.valueOf(c.charAt(2)))<=4)&&Integer.parseInt(String.valueOf(c.charAt(2)))>0){
                         log("Enter valid coordinates or type 0");
-                        return this.getPlayerInputMultipleCoordinates();
+                        return this.getPlayerInputMultipleCoordinates(table);
                     }
                 } catch (NumberFormatException e) {
                     log("Please enter coordinates in a valid format or type 0");
-                    return this.getPlayerInputMultipleCoordinates();
+                    return this.getPlayerInputMultipleCoordinates(table);
                 }
             }
         }

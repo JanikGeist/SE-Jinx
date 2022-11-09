@@ -28,7 +28,7 @@ public class GameLoop {
     Player aktiv = new Player("ak");
     Player dummy = new Player("dummy");
 
-    int currentRound = 1;
+    static int currentRound = 1;
     Player currentPlayer;
 
     TableRunde tableRunde;
@@ -124,7 +124,7 @@ public class GameLoop {
                         case "R" -> currentPlayer.roll();
                         case "L" -> {
                             //let the player choose a luckCard to play
-                            LuckCard chosenOne = currentPlayer.selectLuckCard();
+                            LuckCard chosenOne = currentPlayer.selectLuckCard(this.table);
 
                             //check if player selected a card
                             if (chosenOne == null) {
@@ -177,7 +177,7 @@ public class GameLoop {
 
             //let each player exchange a card for a luck card
             for (Player p: players){
-                p.drawLuckCard(this.table);
+                p.drawLuckCard(this.table,players);
             }
 
             //deal new cards
@@ -764,7 +764,7 @@ public class GameLoop {
             log("You need to match your diceCount: " + diceCount);
             log("Enter all cards you want to select like this: y,x;y,x;y,x;...;y,x if you want to break type BREAK");
             //get input from player
-            String input = player.getPlayerInputMultipleCoordinates();
+            String input = player.getPlayerInputMultipleCoordinates(table);
             if (input.equals("BREAK")) {
                 break;
             }
