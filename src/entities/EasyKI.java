@@ -90,7 +90,7 @@ public class EasyKI extends Player{
     }
 
     @Override
-    public boolean drawLuckCard(Table table){
+    public boolean drawLuckCard(Table table, Player[] players){
         log(this.name + "[AI], i would never waste points for a luck card!");
         return false;
     }
