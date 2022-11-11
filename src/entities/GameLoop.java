@@ -19,6 +19,10 @@ public class GameLoop {
     static int currentRound = 1;
     Player currentPlayer;
 
+    //time between msgs and actions
+    protected int sleepTime = 2000;
+    protected boolean manualNextMsg = true;
+
     Player[] players;
     Table table;
     Verlauf verlauf;
@@ -306,6 +310,16 @@ public class GameLoop {
      * Function to easily log a msg on the console
      */
     private void log(String msg) {
+        if(manualNextMsg){
+            Scanner s = new Scanner(System.in);
+            s.nextLine();
+        }else {
+            try {
+                Thread.sleep(sleepTime);
+            } catch (Exception e) {
+                System.out.println("Sleep exception!");
+            }
+        }
         System.out.println("[JINX] " + msg);
     }
 
