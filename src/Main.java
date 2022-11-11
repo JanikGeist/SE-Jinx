@@ -13,7 +13,7 @@ public class Main {
     public static void main(String[] args) {
 
         // does user want to load a default config
-        boolean config = false;
+        boolean config = false ;
         while(true){
 
             System.out.println("Do you wish to load a config file? [y/n]");
