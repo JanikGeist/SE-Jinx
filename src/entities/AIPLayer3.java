@@ -25,10 +25,12 @@ public class AIPLayer3 extends Player{
 
     @Override
     public String chooseAction(Table table) {
+        //if a new round started
         if(this.myRound!=GameLoop.currentRound){
             this.myRound++;
             this.cardOnTable=null;
         }
+        //if no card was selected
         if (this.cardOnTable == null) {
             if (this.rolls == 0) {
                 this.playerlog("First I roll the dice!");
@@ -178,6 +180,14 @@ public class AIPLayer3 extends Player{
             //if a card was found, take it
             else if (cardOnTable != null) {
                 return "C";
+            }
+        }else{
+            String[] chosenCard=this.cardOnTable.split(",");
+            Card c=table.getField()[Integer.parseInt(chosenCard[0])-1][Integer.parseInt(chosenCard[1])-1];
+            if(this.diceCount==c.getValue()){
+                return "C";
+            }else{
+                return "L";
             }
         }
         for(LuckCard luckCard:this.getLuckCards()){
@@ -695,6 +705,6 @@ public class AIPLayer3 extends Player{
     }
 
     public void playerlog(String msg){
-        System.out.println("[AI]" + msg);
+        System.out.println("[" + this.getName()+ "]" + msg);
     }
 }

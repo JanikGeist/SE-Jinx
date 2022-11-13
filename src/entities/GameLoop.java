@@ -476,6 +476,7 @@ public class GameLoop {
                 }
                 else if (level.equals("hard")){
                     k=new AIPLayer3(name);
+                    break;
                 }
                 else{
                     System.out.println("Not an option. Try again.");
