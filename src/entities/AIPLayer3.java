@@ -168,6 +168,7 @@ public class AIPLayer3 extends Player{
             }
             //if no matching card was found, roll again
             if (cardOnTable == null && this.rolls < 2) {
+                playerlog("I need to roll again!");
                 return "R";
             }
             if (cardOnTable == null && this.rolls == 2) {
@@ -211,7 +212,6 @@ public class AIPLayer3 extends Player{
         }
             this.rolls=0;
             this.cardOnTable=null;
-            //TODO fix
             playerlog("Something is wrong, I have to start over.");
         return this.chooseAction(table);
     }

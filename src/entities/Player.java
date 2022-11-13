@@ -1,6 +1,8 @@
 package entities;
 
 import cards.Card;
+import cards.CardColor;
+import cards.CardType;
 import cards.LuckCard;
 
 import java.util.*;
@@ -373,7 +375,7 @@ public class Player implements Cloneable{
      * */
     public String chooseAction(Table table){
 
-        String[] actions = {"R","L","C","M","N","T","H"};
+        String[] actions = {"R","L","C","M","N","T","H","A"};
 
         while(true) {
             log("Your turn " + this.name + "! Eye count - " + this.diceCount);
@@ -388,6 +390,7 @@ public class Player implements Cloneable{
                     M - Re or Undo
                     N - Verlauf anzeigen
                     H - Show all previous scores
+                    A - Get advise on your next actions
                     """);
 
             Scanner s = new Scanner(System.in);
@@ -859,5 +862,364 @@ public class Player implements Cloneable{
         ret.append("]\n");
 
         return ret.toString();
+    }
+
+    /**
+     * prints advice for player on console
+     *
+     * @param msg
+     */
+    private void adviceLog(String msg){
+        System.out.println("[Advisor]" + msg);
+    }
+
+    /**
+     * gives advice to the player
+     */
+    public void getHelp(Table table){
+        if(this.diceCount==0){
+            this.adviceLog("First you need to roll the dice!");
+            return;
+        }
+        String[] cardcoords = this.findValidCards(table);
+        if(cardcoords[0]==null){
+            this.adviceLog("You can't take any cards.");
+            boolean rollAgain=false;
+            for(LuckCard lc:this.getLuckCards()){
+                if(lc.getCardType().equals(CardType.EXTRATHROW)&&!this.usedCards.contains(lc)){
+                    rollAgain=true;
+                }
+            }
+            if(this.rolls<2){
+                this.adviceLog("You should roll again!");
+                return;
+            }else if(rollAgain){
+                this.adviceLog("You can use your Extrathrow-Luckcard to roll again!");
+                return;
+            }else{
+                this.adviceLog("You can't take any cards and you can't roll again. It looks like you have to end this round.");
+                return;
+            }
+        }else if(cardcoords[1]==null){
+            this.adviceLog("There is only one card you can take, so you should take it.");
+            return;
+        }
+        else{
+            this.adviceLog("These are the coordinates you can chose:");
+            for(String coord:cardcoords){
+                if(coord!=null){
+                    this.adviceLog(coord);
+                    String[] cardcoord=coord.split(",");
+                    Card c=table.getField()[Integer.parseInt(cardcoord[0])-1][Integer.parseInt(cardcoord[1])-1];
+                    if(c.getValue()==this.diceCount){
+                        this.adviceLog("You can just take this card.");
+                    }else{
+                        this.adviceLog("If you'd like to take this card you need to use a Luckcard.");
+                        if(c.getValue()>this.diceCount){
+                            this.adviceLog("You need to increase your dice count.");
+                        } else if (c.getValue()<this.diceCount) {
+                            this.adviceLog("You need to decrease your dice count.");
+                        }
+                    }
+                }
+            }
+            CardColor[] desiredColour=new CardColor[8];
+            //if player has no cards
+            if(this.cards.size()==0){
+                int[] coloursOnTable = this.findAmountByColour(table);
+                int amount = 100;
+                int c = 0;
+                //gets index of smallest amount of cards of a colour
+                for (int b = 0; b < 8; b++) {
+                    for (int a = 0; a < coloursOnTable.length; a++) {
+                        if (coloursOnTable[a] < amount || amount == 0) {
+                            amount = coloursOnTable[a];
+                            c = a;
+                        }
+                    }
+                    coloursOnTable[c] = 100;
+                    CardColor adding = CardColor.GREEN;
+                    switch (c) {
+                        case 0:
+                            adding = CardColor.RED;
+                            break;
+                        case 1:
+                            adding = CardColor.GREEN;
+                            break;
+                        case 2:
+                            adding = CardColor.BLUE;
+                            break;
+                        case 3:
+                            adding = CardColor.YELLOW;
+                            break;
+                        case 4:
+                            adding = CardColor.PURPLE;
+                            break;
+                        case 5:
+                            adding = CardColor.ORANGE;
+                            break;
+                        case 6:
+                            adding = CardColor.GREY;
+                            break;
+                        case 7:
+                            adding = CardColor.WHITE;
+                            break;
+                    }
+                    desiredColour[b] = adding;
+                    amount = 100;
+                }
+            }
+            else{
+                int[] valueByColour = new int[8];
+                for (Card c : this.cards) {
+                    switch (c.getColor()) {
+                        case RED -> valueByColour[0] = valueByColour[0] + c.getValue();
+                        case GREEN -> valueByColour[1] = valueByColour[1] + c.getValue();
+                        case BLUE -> valueByColour[2] = valueByColour[2] + c.getValue();
+                        case YELLOW -> valueByColour[3] = valueByColour[3] + c.getValue();
+                        case PURPLE -> valueByColour[4] = valueByColour[4] + c.getValue();
+                        case ORANGE -> valueByColour[5] = valueByColour[5] + c.getValue();
+                        case GREY -> valueByColour[6] = valueByColour[6] + c.getValue();
+                        case WHITE -> valueByColour[7] = valueByColour[7] + c.getValue();
+                    }
+                }
+                int val = -1;
+                int c = 0;
+                //order card colours by value in hand
+                for (int a = 0; a < 8; a++) {
+                    for (int b = 0; b < 8; b++) {
+                        if (valueByColour[b] > val) {
+                            val = valueByColour[b];
+                            c = b;
+                        }
+                    }
+                    valueByColour[c] = -2;
+                    val = -1;
+                    CardColor cardColor = CardColor.GREEN;
+                    switch (c) {
+                        case 0:
+                            cardColor = CardColor.RED;
+                            break;
+                        case 1:
+                            cardColor = CardColor.GREEN;
+                            break;
+                        case 2:
+                            cardColor = CardColor.BLUE;
+                            break;
+                        case 3:
+                            cardColor = CardColor.YELLOW;
+                            break;
+                        case 4:
+                            cardColor = CardColor.PURPLE;
+                            break;
+                        case 5:
+                            cardColor = CardColor.ORANGE;
+                            break;
+                        case 6:
+                            cardColor = CardColor.GREY;
+                            break;
+                        case 7:
+                            cardColor = CardColor.WHITE;
+                            break;
+                    }
+                    desiredColour[a] = cardColor;
+                }
+            }
+            for(CardColor cardColor:desiredColour){
+                for(String co:cardcoords){
+                    String[] line=co.split(",");
+                    Card c=table.getField()[Integer.parseInt(line[0])][Integer.parseInt(line[1])];
+                    if(c!=null){
+                        if(c.getColor().equals(cardColor)){
+                            if(this.cards.size()==0){
+                                this.adviceLog("I recommend taking " + co + ".");
+                                this.adviceLog("Based on the cards on the table this is the card you are most likely to keep.");
+                                return;
+                            }else{
+                                boolean cardInHand=false;
+                                for(Card card:this.cards){
+                                    if(card.getColor().equals(cardColor)){
+                                        cardInHand=true;
+                                    }
+                                }
+                                if(cardInHand){
+                                    this.adviceLog("I recommend taking " + co + ".");
+                                    this.adviceLog("Based on the cards you already have, this is the best card you can take in order to keep a high score.");
+                                    return;
+                                }
+                                CardColor[] prefferedColour=new CardColor[8];
+                                int[] coloursOnTable = this.findAmountByColour(table);
+                                int amount = 100;
+                                int d = 0;
+                                //gets index of smallest amount of cards of a colour
+                                for (int b = 0; b < 8; b++) {
+                                    for (int a = 0; a < coloursOnTable.length; a++) {
+                                        if (coloursOnTable[a] < amount || amount == 0) {
+                                            amount = coloursOnTable[a];
+                                            d = a;
+                                        }
+                                    }
+                                    coloursOnTable[d] = 100;
+                                    CardColor adding = CardColor.GREEN;
+                                    switch (d) {
+                                        case 0:
+                                            adding = CardColor.RED;
+                                            break;
+                                        case 1:
+                                            adding = CardColor.GREEN;
+                                            break;
+                                        case 2:
+                                            adding = CardColor.BLUE;
+                                            break;
+                                        case 3:
+                                            adding = CardColor.YELLOW;
+                                            break;
+                                        case 4:
+                                            adding = CardColor.PURPLE;
+                                            break;
+                                        case 5:
+                                            adding = CardColor.ORANGE;
+                                            break;
+                                        case 6:
+                                            adding = CardColor.GREY;
+                                            break;
+                                        case 7:
+                                            adding = CardColor.WHITE;
+                                            break;
+                                    }
+                                    prefferedColour[b] = adding;
+                                    amount = 100;
+                                }
+                                for(CardColor cardColor1:prefferedColour){
+                                    for(String coCard:cardcoords){
+                                        String[] line2=co.split(",");
+                                        Card c2=table.getField()[Integer.parseInt(line[0])][Integer.parseInt(line[1])];
+                                        if(c2!=null){
+                                            if(c2.getColor().equals(cardColor1)){
+                                                this.adviceLog("I recommend taking " + co + ".");
+                                                this.adviceLog("You can't take a card to protect your score, so you should take this one because there are few cards of this color on the table.");
+                                                return;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * gets the amount of cards on table by colour
+     * in order red, green, blue, yellow, purple, orange, grey, white
+     *
+     * @param table
+     * @return
+     */
+    public int[] findAmountByColour(Table table){
+        int[] cardByColour = new int[8];
+        for(Card[] card:table.getField()) {
+            for (Card c : card) {
+                if(c!=null){
+                    switch (c.getColor()){
+                        case RED -> cardByColour[0]++;
+                        case GREEN -> cardByColour[1]++;
+                        case BLUE -> cardByColour[2]++;
+                        case YELLOW -> cardByColour[3]++;
+                        case PURPLE -> cardByColour[4]++;
+                        case ORANGE -> cardByColour[5]++;
+                        case GREY -> cardByColour[6]++;
+                        case WHITE -> cardByColour[7]++;
+                    }
+                }
+            }
+        }
+        return cardByColour;
+    }
+
+    /**
+     * finds all cards the AI could take
+     *
+     * @param table
+     * @return
+     */
+    private String[] findValidCards(Table table){
+        boolean oneThree = false;
+        boolean fourSix=false;
+        for(LuckCard luckCard:this.getLuckCards()){
+            if(luckCard.getCardType().equals(CardType.ONETOTHREE)){
+                oneThree=true;
+            }
+            else if(luckCard.getCardType().equals(CardType.FOURTOSIX)){
+                fourSix=true;
+            }
+        }
+        String[] cards = new String[16];
+        int index = 0;
+        int plus = 0;
+        int minus = 0;
+        for(LuckCard luckCard:this.getLuckCards()){
+            //compareTo returns 0 if they are equal
+            if(luckCard.getCardType().compareTo(CardType.PLUSONE)==0&&!this.usedCards.contains(luckCard)){
+                plus++;
+            }
+            else if(luckCard.getCardType().compareTo(CardType.MINUSONE)==0&&!this.usedCards.contains(luckCard)){
+                minus++;
+            }
+        }
+        //row, y-coordinate
+        int ycoord = 1;
+        for(Card[] card:table.getField()) {
+            //x-coordinate
+            int xcoord = 1;
+            for (Card c : card) {
+                if(c!=null){
+                    if(this.diceCount==c.getValue()){
+                        cards[index]=ycoord + "," + xcoord;
+                        index++;
+                    }
+                    else if(oneThree&&c.getValue()<4){
+                        cards[index]=ycoord + "," + xcoord;
+                        index++;
+                    }
+                    else if(fourSix&&c.getValue()>3){
+                        cards[index]=ycoord + "," + xcoord;
+                        index++;
+                    }
+                    else{
+                        int a=plus;
+                        int b=minus;
+                        //all cards that can be taken with plusone
+                        while(a!=0){
+                            if(this.diceCount+a==c.getValue()){
+                                cards[index]=ycoord + "," + xcoord;
+                                index++;
+                            }
+                            a--;
+                        }
+                        //all cards that can be taken with minusone
+                        while(b!=0){
+                            if(this.diceCount-b==c.getValue()){
+                                cards[index]=ycoord + "," + xcoord;
+                                index++;
+                            }
+                            b--;
+                        }
+                    }
+                }
+                xcoord++;
+            }
+            ycoord++;
+        }
+        playerlog("These are the cards I could take:");
+        for(String card:cards){
+            if(card!=null){
+                playerlog(card);
+            }
+        }
+        return cards;
     }
 }

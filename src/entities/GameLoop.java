@@ -168,6 +168,9 @@ public class GameLoop {
                                 manipulieren(veraendert);
                             }
                         }
+                        case "A" -> {
+                            currentPlayer.getHelp(this.table);
+                        }
                     }
                 }
                 //make sure current player always loops, only when round is active
