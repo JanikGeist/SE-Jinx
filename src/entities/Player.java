@@ -969,6 +969,7 @@ public class Player implements Cloneable{
                     amount = 100;
                 }
             }
+            //if player has cards
             else{
                 int[] valueByColour = new int[8];
                 for (Card c : this.cards) {
@@ -1027,84 +1028,89 @@ public class Player implements Cloneable{
             }
             for(CardColor cardColor:desiredColour){
                 for(String co:cardcoords){
-                    String[] line=co.split(",");
-                    Card c=table.getField()[Integer.parseInt(line[0])][Integer.parseInt(line[1])];
-                    if(c!=null){
-                        if(c.getColor().equals(cardColor)){
-                            if(this.cards.size()==0){
-                                this.adviceLog("I recommend taking " + co + ".");
-                                this.adviceLog("Based on the cards on the table this is the card you are most likely to keep.");
-                                return;
-                            }else{
-                                boolean cardInHand=false;
-                                for(Card card:this.cards){
-                                    if(card.getColor().equals(cardColor)){
-                                        cardInHand=true;
-                                    }
-                                }
-                                if(cardInHand){
+                    if(co!=null){
+                        String[] line=co.split(",");
+                        Card c=table.getField()[Integer.parseInt(line[0])-1][Integer.parseInt(line[1])-1];
+                        if(c!=null){
+                            if(c.getColor().equals(cardColor)){
+                                if(this.cards.size()==0){
                                     this.adviceLog("I recommend taking " + co + ".");
-                                    this.adviceLog("Based on the cards you already have, this is the best card you can take in order to keep a high score.");
+                                    this.adviceLog("Based on the cards on the table this is the card you are most likely to keep.");
                                     return;
-                                }
-                                CardColor[] prefferedColour=new CardColor[8];
-                                int[] coloursOnTable = this.findAmountByColour(table);
-                                int amount = 100;
-                                int d = 0;
-                                //gets index of smallest amount of cards of a colour
-                                for (int b = 0; b < 8; b++) {
-                                    for (int a = 0; a < coloursOnTable.length; a++) {
-                                        if (coloursOnTable[a] < amount || amount == 0) {
-                                            amount = coloursOnTable[a];
-                                            d = a;
+                                }else{
+                                    boolean cardInHand=false;
+                                    for(Card card:this.cards){
+                                        if(card.getColor().equals(cardColor)){
+                                            cardInHand=true;
                                         }
                                     }
-                                    coloursOnTable[d] = 100;
-                                    CardColor adding = CardColor.GREEN;
-                                    switch (d) {
-                                        case 0:
-                                            adding = CardColor.RED;
-                                            break;
-                                        case 1:
-                                            adding = CardColor.GREEN;
-                                            break;
-                                        case 2:
-                                            adding = CardColor.BLUE;
-                                            break;
-                                        case 3:
-                                            adding = CardColor.YELLOW;
-                                            break;
-                                        case 4:
-                                            adding = CardColor.PURPLE;
-                                            break;
-                                        case 5:
-                                            adding = CardColor.ORANGE;
-                                            break;
-                                        case 6:
-                                            adding = CardColor.GREY;
-                                            break;
-                                        case 7:
-                                            adding = CardColor.WHITE;
-                                            break;
+                                    if(cardInHand){
+                                        this.adviceLog("I recommend taking " + co + ".");
+                                        this.adviceLog("Based on the cards you already have, this is the best card you can take in order to keep a high score.");
+                                        return;
                                     }
-                                    prefferedColour[b] = adding;
-                                    amount = 100;
-                                }
-                                for(CardColor cardColor1:prefferedColour){
-                                    for(String coCard:cardcoords){
-                                        String[] line2=co.split(",");
-                                        Card c2=table.getField()[Integer.parseInt(line[0])][Integer.parseInt(line[1])];
-                                        if(c2!=null){
-                                            if(c2.getColor().equals(cardColor1)){
-                                                this.adviceLog("I recommend taking " + co + ".");
-                                                this.adviceLog("You can't take a card to protect your score, so you should take this one because there are few cards of this color on the table.");
-                                                return;
+                                    CardColor[] prefferedColour=new CardColor[8];
+                                    int[] coloursOnTable = this.findAmountByColour(table);
+                                    int amount = 100;
+                                    int d = 0;
+                                    //gets index of smallest amount of cards of a colour
+                                    for (int b = 0; b < 8; b++) {
+                                        for (int a = 0; a < coloursOnTable.length; a++) {
+                                            if (coloursOnTable[a] < amount) {
+                                                amount = coloursOnTable[a];
+                                                d = a;
+                                            }
+                                        }
+                                        coloursOnTable[d] = 200;
+                                        CardColor adding = CardColor.GREEN;
+                                        switch (d) {
+                                            case 0:
+                                                adding = CardColor.RED;
+                                                break;
+                                            case 1:
+                                                adding = CardColor.GREEN;
+                                                break;
+                                            case 2:
+                                                adding = CardColor.BLUE;
+                                                break;
+                                            case 3:
+                                                adding = CardColor.YELLOW;
+                                                break;
+                                            case 4:
+                                                adding = CardColor.PURPLE;
+                                                break;
+                                            case 5:
+                                                adding = CardColor.ORANGE;
+                                                break;
+                                            case 6:
+                                                adding = CardColor.GREY;
+                                                break;
+                                            case 7:
+                                                adding = CardColor.WHITE;
+                                                break;
+                                        }
+                                        prefferedColour[b] = adding;
+                                        amount = 100;
+                                    }
+                                    for(CardColor cardColor1:prefferedColour){
+                                        for(String coCard:cardcoords){
+                                            if(coCard==null){
+                                                break;
+                                            }
+                                            String[] line2=coCard.split(",");
+                                            Card c2=table.getField()[Integer.parseInt(line2[0])-1][Integer.parseInt(line2[1])-1];
+                                            if(c2!=null){
+                                                if(c2.getColor().equals(cardColor1)){
+                                                    this.adviceLog("I recommend taking " + coCard + ".");
+                                                    this.adviceLog("You can't take a card to protect your score, so you should take this one because there are few cards of this color on the table.");
+                                                    return;
+                                                }
                                             }
                                         }
                                     }
                                 }
+                                return;
                             }
-                            return;
                         }
                     }
                 }
@@ -1213,12 +1219,6 @@ public class Player implements Cloneable{
                 xcoord++;
             }
             ycoord++;
-        }
-        playerlog("These are the cards I could take:");
-        for(String card:cards){
-            if(card!=null){
-                playerlog(card);
-            }
         }
         return cards;
     }
